@@ -74,7 +74,6 @@
       { k:'ism',     label:'Ism-familiya', req:true },
       { k:'lavozim', label:'Lavozim',      req:true },
       { k:'toifa',   label:'Toifa',        hint:'masalan: 1-toifa, Oliy toifa' },
-      { k:'staj',    label:'Staj',         hint:'masalan: 5 yil' },
     ],
     kutubxona: [
       { k:'nom',     label:'Kitob nomi',    req:true },
@@ -183,7 +182,7 @@
 
   /* ================= RO'YXATLAR ================= */
   const ROW = {
-    xodimlar: (i) => [i.ism, (i.lavozim||'') + (i.staj ? ' \u00b7 staj: ' + i.staj : ''), i.toifa, null],
+    xodimlar: (i) => [i.ism, i.lavozim || '', i.toifa, null, 'role'],
     kutubxona: (i) => [i.nom, (i.muallif||'') + (i.format ? ' \u00b7 ' + i.format : ''), i.mavzu, i.havola],
     darsliklar: (i) => [i.nom, i.davomiyligi ? 'Davomiyligi: ' + i.davomiyligi : '', i.daraja, i.havola],
   };
@@ -195,9 +194,9 @@
 
   function cardHtml(key, item, idx) {
     const r = ROW[key](item);
-    const main = r[0], sub = r[1], tag = r[2], href = r[3];
+    const main = r[0], sub = r[1], tag = r[2], href = r[3], subCls = r[4] || '';
     const inner = '<span class="c-body"><span class="main">' + esc(main) + '</span>' +
-      (sub ? '<span class="sub">' + esc(sub) + '</span>' : '') + '</span>' +
+      (sub ? '<span class="sub ' + subCls + '">' + esc(sub) + '</span>' : '') + '</span>' +
       (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + rowTools(key, idx);
     return (href && !isAdmin)
       ? '<a class="card card-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + inner + '</a>'
