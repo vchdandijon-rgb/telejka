@@ -34,6 +34,16 @@
     text-decoration:none;
   }
   .v-dl:hover{color:var(--accent);border-color:var(--accent);}
+  button.v-dl{font-family:inherit;font-size:17px;}
+  button.v-dl:active{transform:scale(.93);}
+  .rot-hint{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+    background:var(--surface-raised);border:1px solid var(--accent-dim);
+    color:var(--text);padding:8px 15px;border-radius:99px;
+    font-size:13px;z-index:20;opacity:0;pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  .rot-hint.on{opacity:1;}
 
   .pages{flex:1;padding:12px 8px 30px;display:flex;flex-direction:column;
     align-items:center;gap:12px;}
@@ -91,6 +101,7 @@
   <button class="v-back" id="backBtn">← Ortga</button>
   <span class="v-title" id="vTitle">Yuklanmoqda...</span>
   <span class="v-count" id="vCount"></span>
+  <button class="v-dl" id="rotBtn" title="Aylantirish" aria-label="Sahifani aylantirish">⟳</button>
   <a class="v-dl" id="dlLink" download title="Yuklab olish" aria-label="Yuklab olish">⤓</a>
 </div>
 
@@ -179,55 +190,108 @@
       countEl.textContent = pdf.numPages + ' bet';
 
       var wrappers = [];
-      // Har bir bet uchun joy tayyorlaymiz (o'lchamni birinchi betdan olamiz)
-      pdf.getPage(1).then(function (p1) {
-        var vp = p1.getViewport({ scale: 1 });
+      var rendered = {};
+      var rotation = 0;
+      var ROT_KEY = 'telejka:burilish:' + file;
+      try { rotation = (parseInt(localStorage.getItem(ROT_KEY), 10) || 0) % 360; } catch (e) { rotation = 0; }
+
+      var rotBtn = document.getElementById('rotBtn');
+      var hint = document.createElement('div');
+      hint.className = 'rot-hint';
+      document.body.appendChild(hint);
+      var hintTimer;
+      function showHint(txt) {
+        hint.textContent = txt;
+        hint.classList.add('on');
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(function () { hint.classList.remove('on'); }, 1400);
+      }
+
+      // Kenglik hali o'lchanmagan bo'lsa (yashirin sahifa, erta chaqiruv) —
+      // manfiy o'lcham chiqmasligi uchun eng kichik chegara qo'yamiz
+      function pageWidth() {
+        var w = pagesEl.clientWidth - 16;
+        if (!(w > 0)) w = (window.innerWidth || 360) - 24;
+        return Math.max(280, Math.min(900, w));
+      }
+
+      // Betlar uchun joy tayyorlaymiz (burilishni hisobga olib)
+      function layout(firstPage) {
+        var vp = firstPage.getViewport({ scale: 1, rotation: rotation });
         var ratio = vp.height / vp.width;
-
+        pagesEl.innerHTML = '';
+        wrappers = [];
+        rendered = {};
         for (var i = 1; i <= pdf.numPages; i++) {
-          var d = document.createElement('div');
-          d.className = 'pg pg-ph';
-          d.dataset.page = i;
-          d.style.height = Math.round(Math.min(900, pagesEl.clientWidth - 16) * ratio) + 'px';
-          d.textContent = i + '-bet';
-          pagesEl.appendChild(d);
-          wrappers.push(d);
+          var el = document.createElement('div');
+          el.className = 'pg pg-ph';
+          el.dataset.page = i;
+          el.style.height = Math.round(pageWidth() * ratio) + 'px';
+          el.textContent = i + '-bet';
+          pagesEl.appendChild(el);
+          wrappers.push(el);
         }
+        observe();
+      }
 
-        var rendered = {};
-        function renderPage(el) {
-          var n = +el.dataset.page;
-          if (rendered[n]) return;
-          rendered[n] = true;
-          pdf.getPage(n).then(function (page) {
-            var targetW = Math.min(900, pagesEl.clientWidth - 16);
-            var dpr = Math.min(window.devicePixelRatio || 1, 2);
-            var base = page.getViewport({ scale: 1 });
-            var scale = (targetW / base.width) * dpr;
-            var vp2 = page.getViewport({ scale: scale });
-            var canvas = document.createElement('canvas');
-            canvas.width = Math.floor(vp2.width);
-            canvas.height = Math.floor(vp2.height);
-            var ctx = canvas.getContext('2d');
-            page.render({ canvasContext: ctx, viewport: vp2 }).promise.then(function () {
-              el.classList.remove('pg-ph');
-              el.style.height = '';
-              el.textContent = '';
-              el.appendChild(canvas);
-            }).catch(function () { rendered[n] = false; });
-          }).catch(function () { rendered[n] = false; });
-        }
+      function renderPage(el) {
+        var n = +el.dataset.page;
+        var stamp = rotation;
+        if (rendered[n] === stamp) return;
+        rendered[n] = stamp;
+        pdf.getPage(n).then(function (page) {
+          if (rotation !== stamp) return;           // orada aylantirilgan bo'lsa
+          var dpr = Math.min(window.devicePixelRatio || 1, 2);
+          var base = page.getViewport({ scale: 1, rotation: rotation });
+          var scale = (pageWidth() / base.width) * dpr;
+          var vp2 = page.getViewport({ scale: scale, rotation: rotation });
+          var canvas = document.createElement('canvas');
+          canvas.width = Math.floor(vp2.width);
+          canvas.height = Math.floor(vp2.height);
+          page.render({ canvasContext: canvas.getContext('2d'), viewport: vp2 }).promise.then(function () {
+            if (rotation !== stamp) return;
+            el.classList.remove('pg-ph');
+            el.style.height = '';
+            el.textContent = '';
+            el.appendChild(canvas);
+          }).catch(function () { rendered[n] = -1; });
+        }).catch(function () { rendered[n] = -1; });
+      }
 
-        // Ko'rinadigan betlarnigina chizamiz (telefon xotirasini tejash uchun)
+      var io = null;
+      function observe() {
+        if (io) io.disconnect();
         if ('IntersectionObserver' in window) {
-          var io = new IntersectionObserver(function (entries) {
+          io = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) { if (e.isIntersecting) renderPage(e.target); });
           }, { rootMargin: '600px 0px' });
-          wrappers.forEach(function (w) { io.observe(w); });
+          wrappers.forEach(function (wr) { io.observe(wr); });
         } else {
           wrappers.forEach(renderPage);
         }
+      }
+
+      rotBtn.addEventListener('click', function () {
+        rotation = (rotation + 90) % 360;
+        try { localStorage.setItem(ROT_KEY, String(rotation)); } catch (e) {}
+        showHint(rotation === 0 ? 'Asl holat' : rotation + '\u00b0 aylantirildi');
+        var top = window.scrollY;
+        pdf.getPage(1).then(function (p1) {
+          layout(p1);
+          window.scrollTo(0, top);
+        });
       });
+
+      // O'lcham o'zgarsa (telefonni burganda) qayta chizamiz
+      var rsTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(rsTimer);
+        rsTimer = setTimeout(function () {
+          pdf.getPage(1).then(layout);
+        }, 250);
+      });
+
+      pdf.getPage(1).then(layout);
     }).catch(function () {
       status('Kitobni ochib bo\u2018lmadi. Fayl topilmadi yoki buzilgan.<br>' + fallback, true);
     });
