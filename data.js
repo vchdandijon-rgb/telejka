@@ -6,14 +6,14 @@
 
 /* 1) XODIMLAR — sex shtati */
 const XODIMLAR = [
-  {"ism":"Avazbek Axmedov","lavozim":" Sex ustasi","toifa":"7- toifa"},
+  {"ism":"Avazbek Axmedov","lavozim":" Sex ustasi","toifa":"7-toifa"},
   {"ism":"Hayrullo Raximov","lavozim":" Sex ustasi","toifa":"7-toifa"},
   {"ism":"Kamola Umarova","lavozim":" Brigadir","toifa":"6-toifa"},
   {"ism":"Jasur Inobiddinov","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Abdulxamid Xasanov","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Roziqov Xotamjon","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Qobilov Marufjon","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Anvar Axmedov","lavozim":" Chilangar","toifa":"4 toifa"},
+  {"ism":"Anvar Axmedov","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Alimqulov Qaxramon","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Xamdamov Muhammadyusuf","lavozim":" Chilangar","toifa":"4-toifa"},
   {"ism":"Qo`ziyev Ar-Rauf","lavozim":" Chilangar","toifa":"4-toifa"},
