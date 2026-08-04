@@ -45,10 +45,35 @@
   }
   .rot-hint.on{opacity:1;}
 
+  /* Masshtab boshqaruvi */
+  .zoom-box{
+    position:fixed;right:12px;bottom:16px;z-index:15;
+    display:flex;align-items:center;gap:2px;
+    background:rgba(31,34,38,.95);border:1px solid var(--border);
+    border-radius:99px;padding:4px;
+    box-shadow:0 3px 12px rgba(0,0,0,.5);
+  }
+  .zoom-box button{
+    width:38px;height:38px;border-radius:50%;
+    background:none;border:none;color:var(--text);
+    font-size:20px;line-height:1;cursor:pointer;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .zoom-box button:hover{color:var(--accent);}
+  .zoom-box button:active{background:var(--surface-raised);}
+  .zoom-box span{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;
+    font-size:12px;color:var(--text-dim);min-width:44px;text-align:center;
+  }
+
+  /* Yaqinlashtirilganda yon tomonga surish */
+  .pages.zoomed{align-items:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .pages.zoomed .pg{flex:none;}
+
   .pages{flex:1;padding:12px 8px 30px;display:flex;flex-direction:column;
     align-items:center;gap:12px;}
   .pg{
-    background:#fff;width:100%;max-width:900px;border-radius:3px;
+    background:#fff;max-width:none;border-radius:3px;
     box-shadow:0 2px 10px rgba(0,0,0,.5);position:relative;
   }
   .pg canvas{display:block;width:100%;height:auto;border-radius:3px;}
@@ -105,6 +130,12 @@
   <a class="v-dl" id="dlLink" download title="Yuklab olish" aria-label="Yuklab olish">⤓</a>
 </div>
 
+<div class="zoom-box" id="zoomBox" hidden>
+  <button id="zOut" aria-label="Uzoqlashtirish">−</button>
+  <span id="zoomLbl">100%</span>
+  <button id="zIn" aria-label="Yaqinlashtirish">+</button>
+</div>
+
 <div class="pages" id="pages">
   <div class="v-status" id="loadBox">
     <div class="ld-pct" id="ldPct">0%</div>
@@ -127,7 +158,7 @@
   var dlLink  = document.getElementById('dlLink');
 
   titleEl.textContent = nom;
-  document.title = nom + ' — Telejka sexi';
+  document.title = nom + ' \u2014 Telejka sexi';
 
   document.getElementById('backBtn').addEventListener('click', function () {
     if (history.length > 1) history.back();
@@ -138,165 +169,261 @@
     pagesEl.innerHTML = '<div class="v-status' + (isErr ? ' v-err' : '') + '">' + html + '</div>';
   }
 
-  // Faqat shu sayt ichidagi nisbiy manzillarga ruxsat
   if (!file || /^[a-z]+:/i.test(file) || file.indexOf('..') !== -1) {
     status('Kitob manzili noto\u2018g\u2018ri.', true);
     return;
   }
   dlLink.href = file;
 
-  var fallback = '<div class="v-fallback-wrap">Kitobni ko\u2018rsatib bo\u2018lmadi.<br>' +
+  var fallback = 'Kitobni ko\u2018rsatib bo\u2018lmadi.<br>' +
     'Uni telefoningizga yuklab olib ochishingiz mumkin.<br>' +
-    '<a class="v-fallback" href="' + file.replace(/"/g, '&quot;') + '" download>Yuklab olish</a></div>';
+    '<a class="v-fallback" href="' + file.replace(/"/g, '&quot;') + '" download>Yuklab olish</a>';
 
-  // PDF.js ni yuklaymiz
+  /* ---------- Yuklanish ko'rsatkichi ---------- */
+  var pctEl  = document.getElementById('ldPct');
+  var fillEl = document.getElementById('ldFill');
+  var barEl  = document.getElementById('ldBar');
+  var sizeEl = document.getElementById('ldSize');
+  function mb(b) { return (b / 1048576).toFixed(1) + ' MB'; }
+  function prog(loaded, total, note) {
+    if (!pctEl || !document.body.contains(pctEl)) return;
+    if (note) { pctEl.textContent = note; fillEl.style.width = '100%'; sizeEl.textContent = ''; return; }
+    if (total) {
+      var pct = Math.min(100, Math.round(loaded / total * 100));
+      pctEl.textContent = pct + '%';
+      fillEl.style.width = pct + '%';
+      barEl.setAttribute('aria-valuenow', pct);
+      sizeEl.textContent = mb(loaded) + ' / ' + mb(total);
+    } else {
+      pctEl.textContent = mb(loaded);
+      sizeEl.textContent = 'Yuklanmoqda...';
+    }
+  }
+
+  /* ---------- Kitobni yuklash va saqlab qo'yish ----------
+     Bir marta yuklangan kitob brauzer xotirasida saqlanadi,
+     keyingi safar internetsiz ham darhol ochiladi. */
+  var CACHE = 'telejka-kitoblar-v1';
+
+  function fromCache(url) {
+    if (!window.caches) return Promise.resolve(null);
+    return caches.open(CACHE)
+      .then(function (c) { return c.match(url); })
+      .then(function (r) { return r ? r.arrayBuffer() : null; })
+      .catch(function () { return null; });
+  }
+
+  function toCache(url, buf) {
+    if (!window.caches) return;
+    try {
+      caches.open(CACHE).then(function (c) {
+        c.put(url, new Response(buf.slice(0), { headers: { 'Content-Type': 'application/pdf' } }));
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  function download(url) {
+    return fetch(url).then(function (resp) {
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      var total = parseInt(resp.headers.get('content-length'), 10) || 0;
+      if (!resp.body || !resp.body.getReader) {
+        return resp.arrayBuffer().then(function (b) { prog(b.byteLength, b.byteLength); return b; });
+      }
+      var reader = resp.body.getReader();
+      var chunks = [], got = 0;
+      return (function pump() {
+        return reader.read().then(function (res) {
+          if (res.done) {
+            var out = new Uint8Array(got), off = 0;
+            for (var i = 0; i < chunks.length; i++) { out.set(chunks[i], off); off += chunks[i].length; }
+            return out.buffer;
+          }
+          chunks.push(res.value);
+          got += res.value.length;
+          prog(got, total);
+          return pump();
+        });
+      })();
+    });
+  }
+
+  function loadBytes(url) {
+    return fromCache(url).then(function (buf) {
+      if (buf && buf.byteLength) { prog(0, 0, 'Xotiradan'); return buf; }
+      return download(url).then(function (b) { toCache(url, b); return b; });
+    });
+  }
+
+  /* ---------- PDF.js ---------- */
   var CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
   var s = document.createElement('script');
   s.src = CDN + 'pdf.min.js';
   s.onerror = function () {
     status('Internet aloqasi sust bo\u2018lgani uchun ko\u2018ruvchi yuklanmadi.<br>' + fallback, true);
   };
+
   s.onload = function () {
     var pdfjsLib = window.pdfjsLib;
     if (!pdfjsLib) { status(fallback, true); return; }
     pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + 'pdf.worker.min.js';
 
-    var pctEl  = document.getElementById('ldPct');
-    var fillEl = document.getElementById('ldFill');
-    var barEl  = document.getElementById('ldBar');
-    var sizeEl = document.getElementById('ldSize');
-
-    function mb(bytes) { return (bytes / 1048576).toFixed(1) + ' MB'; }
-
-    var task = pdfjsLib.getDocument(file);
-    task.onProgress = function (p) {
-      if (!pctEl || !document.body.contains(pctEl)) return;
-      if (p.total) {
-        var pct = Math.min(100, Math.round(p.loaded / p.total * 100));
-        pctEl.textContent = pct + '%';
-        fillEl.style.width = pct + '%';
-        barEl.setAttribute('aria-valuenow', pct);
-        sizeEl.textContent = mb(p.loaded) + ' / ' + mb(p.total);
-      } else {
-        // server umumiy hajmni bermasa — yuklanganini ko'rsatamiz
-        pctEl.textContent = mb(p.loaded);
-        fillEl.style.width = '100%';
-        sizeEl.textContent = 'Yuklanmoqda...';
-      }
-    };
-
-    task.promise.then(function (pdf) {
-      pagesEl.innerHTML = '';
-      countEl.textContent = pdf.numPages + ' bet';
-
-      var wrappers = [];
-      var rendered = {};
-      var rotation = 0;
-      var ROT_KEY = 'telejka:burilish:' + file;
-      try { rotation = (parseInt(localStorage.getItem(ROT_KEY), 10) || 0) % 360; } catch (e) { rotation = 0; }
-
-      var rotBtn = document.getElementById('rotBtn');
-      var hint = document.createElement('div');
-      hint.className = 'rot-hint';
-      document.body.appendChild(hint);
-      var hintTimer;
-      function showHint(txt) {
-        hint.textContent = txt;
-        hint.classList.add('on');
-        clearTimeout(hintTimer);
-        hintTimer = setTimeout(function () { hint.classList.remove('on'); }, 1400);
-      }
-
-      // Kenglik hali o'lchanmagan bo'lsa (yashirin sahifa, erta chaqiruv) —
-      // manfiy o'lcham chiqmasligi uchun eng kichik chegara qo'yamiz
-      function pageWidth() {
-        var w = pagesEl.clientWidth - 16;
-        if (!(w > 0)) w = (window.innerWidth || 360) - 24;
-        return Math.max(280, Math.min(900, w));
-      }
-
-      // Betlar uchun joy tayyorlaymiz (burilishni hisobga olib)
-      function layout(firstPage) {
-        var vp = firstPage.getViewport({ scale: 1, rotation: rotation });
-        var ratio = vp.height / vp.width;
-        pagesEl.innerHTML = '';
-        wrappers = [];
-        rendered = {};
-        for (var i = 1; i <= pdf.numPages; i++) {
-          var el = document.createElement('div');
-          el.className = 'pg pg-ph';
-          el.dataset.page = i;
-          el.style.height = Math.round(pageWidth() * ratio) + 'px';
-          el.textContent = i + '-bet';
-          pagesEl.appendChild(el);
-          wrappers.push(el);
-        }
-        observe();
-      }
-
-      function renderPage(el) {
-        var n = +el.dataset.page;
-        var stamp = rotation;
-        if (rendered[n] === stamp) return;
-        rendered[n] = stamp;
-        pdf.getPage(n).then(function (page) {
-          if (rotation !== stamp) return;           // orada aylantirilgan bo'lsa
-          var dpr = Math.min(window.devicePixelRatio || 1, 2);
-          var base = page.getViewport({ scale: 1, rotation: rotation });
-          var scale = (pageWidth() / base.width) * dpr;
-          var vp2 = page.getViewport({ scale: scale, rotation: rotation });
-          var canvas = document.createElement('canvas');
-          canvas.width = Math.floor(vp2.width);
-          canvas.height = Math.floor(vp2.height);
-          page.render({ canvasContext: canvas.getContext('2d'), viewport: vp2 }).promise.then(function () {
-            if (rotation !== stamp) return;
-            el.classList.remove('pg-ph');
-            el.style.height = '';
-            el.textContent = '';
-            el.appendChild(canvas);
-          }).catch(function () { rendered[n] = -1; });
-        }).catch(function () { rendered[n] = -1; });
-      }
-
-      var io = null;
-      function observe() {
-        if (io) io.disconnect();
-        if ('IntersectionObserver' in window) {
-          io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) { if (e.isIntersecting) renderPage(e.target); });
-          }, { rootMargin: '600px 0px' });
-          wrappers.forEach(function (wr) { io.observe(wr); });
-        } else {
-          wrappers.forEach(renderPage);
-        }
-      }
-
-      rotBtn.addEventListener('click', function () {
-        rotation = (rotation + 90) % 360;
-        try { localStorage.setItem(ROT_KEY, String(rotation)); } catch (e) {}
-        showHint(rotation === 0 ? 'Asl holat' : rotation + '\u00b0 aylantirildi');
-        var top = window.scrollY;
-        pdf.getPage(1).then(function (p1) {
-          layout(p1);
-          window.scrollTo(0, top);
-        });
-      });
-
-      // O'lcham o'zgarsa (telefonni burganda) qayta chizamiz
-      var rsTimer;
-      window.addEventListener('resize', function () {
-        clearTimeout(rsTimer);
-        rsTimer = setTimeout(function () {
-          pdf.getPage(1).then(layout);
-        }, 250);
-      });
-
-      pdf.getPage(1).then(layout);
+    loadBytes(file).then(function (bytes) {
+      return pdfjsLib.getDocument({ data: bytes }).promise;
+    }).then(function (pdf) {
+      start(pdf);
     }).catch(function () {
       status('Kitobni ochib bo\u2018lmadi. Fayl topilmadi yoki buzilgan.<br>' + fallback, true);
     });
   };
   document.head.appendChild(s);
+
+  /* ================= KO'RSATISH ================= */
+  function start(pdf) {
+    pagesEl.innerHTML = '';
+    countEl.textContent = pdf.numPages + ' bet';
+
+    var wrappers = [];
+    var live = {};              // chizilgan betlar: {bet: burilish+masshtab izi}
+    var rotation = 0;
+    var zoom = 1;
+    var ratio = 1.4;
+    var ROT_KEY = 'telejka:burilish:' + file;
+    try { rotation = (parseInt(localStorage.getItem(ROT_KEY), 10) || 0) % 360; } catch (e) {}
+
+    var zoomBox = document.getElementById('zoomBox');
+    var zoomLbl = document.getElementById('zoomLbl');
+    zoomBox.hidden = false;
+
+    var hint = document.createElement('div');
+    hint.className = 'rot-hint';
+    document.body.appendChild(hint);
+    var hintTimer;
+    function showHint(t) {
+      hint.textContent = t;
+      hint.classList.add('on');
+      clearTimeout(hintTimer);
+      hintTimer = setTimeout(function () { hint.classList.remove('on'); }, 1400);
+    }
+
+    function baseWidth() {
+      var w = pagesEl.clientWidth - 16;
+      if (!(w > 0)) w = (window.innerWidth || 360) - 24;
+      return Math.max(280, Math.min(900, w));
+    }
+    function pageWidth() { return Math.round(baseWidth() * zoom); }
+    function stamp() { return rotation + '/' + zoom; }
+
+    /* --- Betni bo'shatish (telefon xotirasi to'lib qolmasligi uchun) --- */
+    function freePage(el) {
+      if (!live[el.dataset.page]) return;
+      delete live[el.dataset.page];
+      var c = el.querySelector('canvas');
+      if (c) { c.width = 0; c.height = 0; c.remove(); }
+      el.classList.add('pg-ph');
+      el.style.height = Math.round(pageWidth() * ratio) + 'px';
+      el.textContent = el.dataset.page + '-bet';
+    }
+
+    function renderPage(el) {
+      var n = +el.dataset.page;
+      var st = stamp();
+      if (live[n] === st) return;
+      live[n] = st;
+      pdf.getPage(n).then(function (page) {
+        if (stamp() !== st) return;
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var base = page.getViewport({ scale: 1, rotation: rotation });
+        var sc = (pageWidth() / base.width) * dpr;
+        var vp = page.getViewport({ scale: sc, rotation: rotation });
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.floor(vp.width);
+        canvas.height = Math.floor(vp.height);
+        var ctx = canvas.getContext('2d');
+        page.render({ canvasContext: ctx, viewport: vp }).promise.then(function () {
+          if (stamp() !== st || live[n] !== st) { canvas.width = 0; canvas.height = 0; return; }
+          el.classList.remove('pg-ph');
+          el.style.height = '';
+          el.textContent = '';
+          el.appendChild(canvas);
+        }).catch(function () { delete live[n]; });
+      }).catch(function () { delete live[n]; });
+    }
+
+    var ioDraw = null, ioFree = null;
+    function observe() {
+      if (ioDraw) ioDraw.disconnect();
+      if (ioFree) ioFree.disconnect();
+      if (!('IntersectionObserver' in window)) { wrappers.forEach(renderPage); return; }
+      ioDraw = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) renderPage(e.target); });
+      }, { rootMargin: '400px 0px' });
+      // Uzoqlashgan betlarni xotiradan bo'shatamiz
+      ioFree = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (!e.isIntersecting) freePage(e.target); });
+      }, { rootMargin: '1200px 0px' });
+      wrappers.forEach(function (w) { ioDraw.observe(w); ioFree.observe(w); });
+    }
+
+    function layout() {
+      return pdf.getPage(1).then(function (p1) {
+        var vp = p1.getViewport({ scale: 1, rotation: rotation });
+        ratio = vp.height / vp.width;
+        var w = pageWidth();
+        pagesEl.innerHTML = '';
+        wrappers = []; live = {};
+        for (var i = 1; i <= pdf.numPages; i++) {
+          var el = document.createElement('div');
+          el.className = 'pg pg-ph';
+          el.dataset.page = i;
+          el.style.width = w + 'px';
+          el.style.height = Math.round(w * ratio) + 'px';
+          el.textContent = i + '-bet';
+          pagesEl.appendChild(el);
+          wrappers.push(el);
+        }
+        pagesEl.classList.toggle('zoomed', zoom > 1);
+        observe();
+      });
+    }
+
+    /* --- Aylantirish --- */
+    document.getElementById('rotBtn').addEventListener('click', function () {
+      rotation = (rotation + 90) % 360;
+      try { localStorage.setItem(ROT_KEY, String(rotation)); } catch (e) {}
+      showHint(rotation === 0 ? 'Asl holat' : rotation + '\u00b0 aylantirildi');
+      var y = window.scrollY;
+      layout().then(function () { window.scrollTo(0, y); });
+    });
+
+    /* --- Masshtab: qayta chiziladi, shuning uchun xira bo'lmaydi --- */
+    var STEPS = [1, 1.5, 2, 3];
+    function setZoom(i) {
+      var old = zoom;
+      zoom = STEPS[Math.max(0, Math.min(STEPS.length - 1, i))];
+      if (zoom === old) return;
+      zoomLbl.textContent = Math.round(zoom * 100) + '%';
+      var frac = pagesEl.scrollLeft / Math.max(1, pagesEl.scrollWidth);
+      var y = window.scrollY * (zoom / old);
+      layout().then(function () {
+        window.scrollTo(0, y);
+        pagesEl.scrollLeft = frac * pagesEl.scrollWidth;
+      });
+    }
+    document.getElementById('zIn').addEventListener('click', function () {
+      setZoom(STEPS.indexOf(zoom) + 1);
+    });
+    document.getElementById('zOut').addEventListener('click', function () {
+      setZoom(STEPS.indexOf(zoom) - 1);
+    });
+
+    var rs;
+    window.addEventListener('resize', function () {
+      clearTimeout(rs);
+      rs = setTimeout(function () { layout(); }, 250);
+    });
+
+    layout();
+  }
 })();
 </script>
 </body>
