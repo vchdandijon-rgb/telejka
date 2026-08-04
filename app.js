@@ -198,9 +198,12 @@
     const inner = '<span class="c-body"><span class="main">' + esc(main) + '</span>' +
       (sub ? '<span class="sub ' + subCls + '">' + esc(sub) + '</span>' : '') + '</span>' +
       (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + rowTools(key, idx);
-    return (href && !isAdmin)
-      ? '<a class="card card-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + inner + '</a>'
-      : '<div class="card">' + inner + '</div>';
+    if (!href || isAdmin) return '<div class="card">' + inner + '</div>';
+    // PDF bo'lsa — saytning o'z ko'ruvchisida ochamiz (telefonda yuklab ketmasligi uchun)
+    const dest = /\.pdf$/i.test(href)
+      ? 'kitob.html?f=' + encodeURIComponent(href) + '&nom=' + encodeURIComponent(main)
+      : href;
+    return '<a class="card card-link" href="' + esc(dest) + '">' + inner + '</a>';
   }
 
   function renderList(key) {
