@@ -458,3 +458,21 @@ textarea.f-in{resize:vertical;line-height:1.5;}
   .modal{border-radius:10px;}
   .modal-foot{border-radius:0 0 10px 10px;}
 }
+
+/* ============================================================
+   TUZATISH: karta ichidagi matnlar alohida qatorda
+   ============================================================ */
+.card .main, .card .sub,
+.test-pick .main, .test-pick .sub,
+.review-item .main, .review-item .sub{
+  display:block;
+}
+.card .main{margin-bottom:3px;}
+
+/* Lavozim — ko'zga tashlanadigan qilib ajratilgan */
+.card .sub.role{
+  color:var(--accent);
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:.01em;
+}
