@@ -1,39 +1,31 @@
 /* ============================================================
    TELEJKA TA’MIRLASH SEXI — MA’LUMOTLAR BAZASI
-   Admin panel orqali yaratilgan: 04/08/2026, 09:31:15
+   Admin panel orqali yaratilgan: 04/08/2026, 10:36:44
    GitHub repositorydagi eski data.js o‘rniga shuni yuklang.
    ============================================================ */
 
 /* 1) XODIMLAR — sex shtati */
 const XODIMLAR = [
-  {"ism":"Avazbek Axmedov","lavozim":" Sex ustasi","toifa":"7-toifa"},
-  {"ism":"Hayrullo Raximov","lavozim":" Sex ustasi","toifa":"7-toifa"},
-  {"ism":"Kamola Umarova","lavozim":" Brigadir","toifa":"6-toifa"},
-  {"ism":"Jasur Inobiddinov","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Abdulxamid Xasanov","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Roziqov Xotamjon","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Qobilov Marufjon","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Anvar Axmedov","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Alimqulov Qaxramon","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Xamdamov Muhammadyusuf","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Qo`ziyev Ar-Rauf","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Maxamadov Asadbek","lavozim":" Chilangar","toifa":"4-toifa"},
-  {"ism":"Qo`ziboev Shuxrat","lavozim":" Elektrpayvandchi","toifa":"4-toifa"}, 
-  {"ism":"Nishonov NEmatillo","lavozim":"  Elektrpayvandchi","toifa":"5-toifa"},
-  {"ism":"Omonov Qodirjon","lavozim":" Elektrgazpayvandchi","toifa":"4-toifa"},
-  {"ism":"Xodjiboyev Biloliddin","lavozim":" Elektrgazpayvandchi","toifa":"4-toifa"},
-  {"ism":"Olimjonov Ulug`bek","lavozim":" nuqson topuvchi","toifa":"4-toifa"},
-  {"ism":"Matxoliqov Nurullo","lavozim":" nuqson topuvchi","toifa":"4-toifa"}, 
+  {"ism":"Avazbek Axmedov","lavozim":"Sex ustasi","toifa":"7- toifa","staj":"-"},
+  {"ism":"Hayrullo Raximov","lavozim":"sex ustasi","toifa":"7-toifa","staj":"-"},
+  {"ism":"Otabek Rahimov","lavozim":"Payvandchi","toifa":"2-toifa","staj":"6 yil"},
+  {"ism":"Jasur Ne'matov","lavozim":"Payvandchi","toifa":"1-toifa","staj":"11 yil"},
+  {"ism":"Diyor Sultonov","lavozim":"Mexanik-slesar","toifa":"2-toifa","staj":"4 yil"},
+  {"ism":"Farrux Aliyev","lavozim":"Mexanik-slesar","toifa":"3-toifa","staj":"2 yil"},
+  {"ism":"Bekzod Tursunov","lavozim":"Elektrik","toifa":"1-toifa","staj":"8 yil"},
+  {"ism":"Nodira Xolova","lavozim":"Sifat nazoratchisi","toifa":"Oliy toifa","staj":"10 yil"},
+  {"ism":"Ulug'bek Karimov","lavozim":"Bo'yoqchi","toifa":"2-toifa","staj":"5 yil"},
+  {"ism":"Sherzod Ismoilov","lavozim":"Omborchi","toifa":"—","staj":"3 yil"},
 ];
 
 /* 2) KUTUBXONA — elektron kitoblar */
 const KITOBLAR = [
-  {"nom":"РД 32 ЦВ 050-2020 (с 01.01.2025)","muallif":"-","format":"PDF","mavzu":"Payvandlash","havola":""},
-  {"nom":"Metall konstruksiyalarni ta'mirlash","muallif":"R. Islomov","format":"PDF · 6.8 MB","mavzu":"Ta'mirlash"},
-  {"nom":"Gidravlik tizimlar qo'llanmasi","muallif":"A. Yo'ldoshev","format":"PDF · 3.5 MB","mavzu":"Gidravlika"},
-  {"nom":"Mehnat muhofazasi va texnika xavfsizligi","muallif":"Sex arxivi","format":"PDF · 1.9 MB","mavzu":"Xavfsizlik"},
-  {"nom":"G'ildirak va podshipnik tuzilishi","muallif":"M. Sobirov","format":"PDF · 2.7 MB","mavzu":"Mexanika"},
-  {"nom":"Bo'yash va korroziyadan himoya","muallif":"D. Egamov","format":"PDF · 2.1 MB","mavzu":"Bo'yash"},
+  {"nom":"РД 32 ЦВ 050-2020 (с 01.01.2025)","muallif":"-","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/РД 32 ЦВ 050-2020 (с 01.01.2025).PDF"},
+  {"nom":"РД 32 ЦВ 052-2009 (с 01.07.2026 г)","muallif":"-","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/РД 32 ЦВ 052-2009 (с 01.07.2026 г).pdf"},
+  {"nom":"РД 32 ЦВ 067-2022 (с 01.01.2025г)","muallif":"","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/РД 32 ЦВ 067-2022 (с 01.01.2025г).pdf"},
+  {"nom":"РД 32 ЦВ 082-2021 (с 01.01.2026 г)","muallif":"","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/РД 32 ЦВ 082-2021 (с 01.01.2026 г).pdf"},
+  {"nom":"Руководства ДР Пасс вагон","muallif":"-","format":"PDF","mavzu":"normativ xujjat","havola":"kitoblar/Руководства ДР Пасс вагон (2).pdf"},
+  {"nom":"Сварка_и_наплавка_корпуса_буксы_Технологическая_инструкция_ТИ_05","muallif":"-","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/Сварка_и_наплавка_корпуса_буксы_Технологическая_инструкция_ТИ_05.pdf"},
 ];
 
 /* 3) DARSLIKLAR — o‘quv materiallari */
