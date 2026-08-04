@@ -40,24 +40,52 @@
     testlar:    arr(typeof TESTLAR    !== 'undefined' ? TESTLAR    : null),
   };
 
+  /* data.js dagi nashr etilgan ma'lumotning "barmoq izi".
+     Qoralama shu izga bog'lanadi: data.js yangilansa, eski qoralama
+     avtomatik bekor qilinadi va sayt yangi ma'lumotni ko'rsatadi. */
+  function fingerprint() {
+    const s = JSON.stringify([store.xodimlar, store.kutubxona, store.darsliklar, store.testlar]);
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+    return s.length + ':' + h.toString(36);
+  }
+  const NASHR = fingerprint();
+
   let hasDraft = false;
+  let draftEskirdi = false;
+
   (function loadDraft() {
     const raw = LS.get(DRAFT_KEY);
     if (!raw) return;
-    try {
-      const d = JSON.parse(raw);
-      ['xodimlar','kutubxona','darsliklar','testlar'].forEach(k => {
-        if (Array.isArray(d[k])) store[k] = d[k];
-      });
-      hasDraft = true;
-    } catch (e) { LS.del(DRAFT_KEY); }
+    let d;
+    try { d = JSON.parse(raw); } catch (e) { LS.del(DRAFT_KEY); return; }
+
+    // Eski format yoki boshqa nashrga tegishli qoralama -> bekor qilamiz
+    if (!d || d.nashr !== NASHR) {
+      LS.del(DRAFT_KEY);
+      draftEskirdi = true;
+      return;
+    }
+    ['xodimlar','kutubxona','darsliklar','testlar'].forEach(k => {
+      if (Array.isArray(d[k])) store[k] = d[k];
+    });
+    hasDraft = true;
   })();
 
   const saveDraft = () => {
-    LS.set(DRAFT_KEY, JSON.stringify(store));
+    LS.set(DRAFT_KEY, JSON.stringify({
+      nashr: NASHR,
+      xodimlar: store.xodimlar, kutubxona: store.kutubxona,
+      darsliklar: store.darsliklar, testlar: store.testlar,
+    }));
     hasDraft = true;
     renderBar();
   };
+
+  function tashlaQoralama() {
+    LS.del(DRAFT_KEY);
+    location.reload();
+  }
 
   const validTests = () => store.testlar.filter(t => t && Array.isArray(t.savollar) && t.savollar.length);
 
@@ -115,6 +143,7 @@
           '<span class="ab-label">Admin rejimi</span>' +
           (hasDraft ? '<span class="ab-warn">saqlanmagan o\u2018zgarish</span>' : '') +
           '</div><div class="ab-right">' +
+          (hasDraft ? '<button class="ab-btn" data-act="discard">Qoralamani tashlash</button>' : '') +
           '<button class="ab-btn primary" data-act="export">data.js yuklab olish</button>' +
           '<button class="ab-btn" data-act="logout">Chiqish</button></div>';
       }
@@ -544,6 +573,9 @@
       const a = act.getAttribute('data-act');
       if (a === 'login') loginModal();
       else if (a === 'export') exportDataJs();
+      else if (a === 'discard') {
+        if (window.confirm('Saqlanmagan o\u2018zgarishlar o\u2018chiriladi va sayt data.js dagi ma\u2019lumotga qaytadi. Davom etamizmi?')) tashlaQoralama();
+      }
       else if (a === 'logout') {
         isAdmin = false; LS.del(ADMIN_KEY);
         renderBar(); route(); announce('Admin rejimidan chiqildi');
@@ -576,7 +608,10 @@
   });
 
   /* ================= ISHGA TUSHIRISH ================= */
-  try { renderBar(); route(); }
+  try {
+    renderBar(); route();
+    if (draftEskirdi) announce('Sayt ma\u2019lumoti yangilangan, eski qoralama bekor qilindi.');
+  }
   catch (err) {
     app.innerHTML = '<div class="empty-state">Ma\u2019lumotlarni yuklashda xatolik.<br>' +
       '<span class="hint-sm">data.js faylini tekshiring.</span></div>';
