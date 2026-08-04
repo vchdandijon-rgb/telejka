@@ -28,7 +28,7 @@ const XODIMLAR = [
 
 /* 2) KUTUBXONA — elektron kitoblar */
 const KITOBLAR = [
-  {"nom":"Payvandlash ishlari asoslari","muallif":"T. Nazarov","format":"PDF · 4.2 MB","mavzu":"Payvandlash","havola":""},
+  {"nom":"РД 32 ЦВ 050-2020 (с 01.01.2025)","muallif":"-","format":"PDF","mavzu":"Payvandlash","havola":""},
   {"nom":"Metall konstruksiyalarni ta'mirlash","muallif":"R. Islomov","format":"PDF · 6.8 MB","mavzu":"Ta'mirlash"},
   {"nom":"Gidravlik tizimlar qo'llanmasi","muallif":"A. Yo'ldoshev","format":"PDF · 3.5 MB","mavzu":"Gidravlika"},
   {"nom":"Mehnat muhofazasi va texnika xavfsizligi","muallif":"Sex arxivi","format":"PDF · 1.9 MB","mavzu":"Xavfsizlik"},
