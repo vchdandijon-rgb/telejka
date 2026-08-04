@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR kod yaratish — Telejka sexi</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#15171a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<style>
+  .qr-wrap{max-width:460px;margin:0 auto;padding:20px 18px 40px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;}
+  .url-box{
+    width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);
+    padding:10px 12px;border-radius:6px;
+    font-family:'IBM Plex Mono', ui-monospace, 'Courier New', monospace;font-size:13px;
+  }
+  .url-box:focus-visible{border-color:var(--accent);}
+  .row{display:flex;gap:8px;flex-wrap:wrap;}
+  .row .ghost-btn,.row .next-btn{flex:1;min-width:120px;margin-top:0;}
+  .qr-sheet{background:#fff;border-radius:8px;padding:20px;text-align:center;margin:18px 0;}
+  .qr-sheet svg{width:100%;max-width:280px;height:auto;display:block;margin:0 auto;}
+  .qr-caption{color:#111;font-family:'Oswald','Arial Narrow',sans-serif;
+    text-transform:uppercase;font-size:15px;margin-top:12px;letter-spacing:.03em;}
+  .qr-caption small{display:block;font-family:'IBM Plex Mono',monospace;
+    text-transform:none;font-size:11px;color:#555;margin-top:5px;word-break:break-all;}
+  .err{color:#d9756a;font-size:13px;margin-top:8px;}
+  .note{color:var(--text-dim);font-size:13px;line-height:1.55;margin-top:16px;
+    border-top:1px solid var(--border);padding-top:14px;}
+  @media print{
+    .nameplate,.stripe,.field,.row,.note,footer{display:none !important;}
+    body{background:#fff;}
+    .qr-wrap{padding:0;max-width:none;}
+    .qr-sheet{margin:0;padding:0;}
+    .qr-sheet svg{max-width:70vw;}
+  }
+</style>
+</head>
+<body>
+  <header class="nameplate">
+    <span class="rivet bl" aria-hidden="true"></span><span class="rivet br" aria-hidden="true"></span>
+    <div class="eyebrow">Admin vositasi</div>
+    <h1>QR kod generatori</h1>
+    <p>Sex portaliga kirish uchun bosmaga tayyor QR kod</p>
+  </header>
+  <div class="stripe" aria-hidden="true"></div>
+
+  <main class="qr-wrap">
+    <div class="field">
+      <label for="urlInput">Portal manzili</label>
+      <input class="url-box" id="urlInput" type="url" autocomplete="off">
+      <div class="err" id="err" role="alert"></div>
+    </div>
+
+    <div class="field">
+      <label for="capInput">Chop etishdagi sarlavha</label>
+      <input class="url-box" id="capInput" value="Telejka sexi — elektron portal">
+    </div>
+
+    <div class="qr-sheet" id="sheet">
+      <div id="qrHolder"></div>
+      <div class="qr-caption" id="caption"></div>
+    </div>
+
+    <div class="row">
+      <button class="next-btn" onclick="window.print()">Chop etish</button>
+      <button class="ghost-btn" id="dlBtn">SVG yuklab olish</button>
+    </div>
+
+    <p class="note">
+      QR kod shu sahifaning o'zida yaratiladi — hech qanday tashqi xizmatga
+      murojaat qilinmaydi, shuning uchun internetsiz ham ishlaydi.
+      Chop etib, sex devoriga osing: xodimlar telefon kamerasi bilan
+      skanerlab portalga kiradi.
+    </p>
+  </main>
+
+  <footer>Ichki foydalanish uchun · Telejka ta'mirlash sexi</footer>
+
+  <script src="qr.js"></script>
+  <script>
+  (function(){
+    const urlInput=document.getElementById('urlInput');
+    const capInput=document.getElementById('capInput');
+    const holder=document.getElementById('qrHolder');
+    const caption=document.getElementById('caption');
+    const err=document.getElementById('err');
+    let lastSvg='';
+
+    const defaultUrl = location.href.replace(/qr\.html.*$/,'index.html');
+    urlInput.value = defaultUrl;
+
+    function render(){
+      const url=urlInput.value.trim();
+      caption.innerHTML = capInput.value.replace(/[<>&]/g,'') +
+        '<small>' + url.replace(/[<>&]/g,'') + '</small>';
+      if(!url){ holder.innerHTML=''; err.textContent='Manzilni kiriting.'; return; }
+      try{
+        // Chop etilgan qog'oz g'ijimlansa ham o'qilishi uchun Q darajasi (25% tiklash)
+        const qr = QRGen.generate(url, 'Q');
+        lastSvg = QRGen.toSVG(qr, {quiet:4});
+        holder.innerHTML = lastSvg;
+        err.textContent='';
+      }catch(e){
+        holder.innerHTML='';
+        err.textContent = 'QR yaratilmadi: ' + e.message;
+      }
+    }
+
+    urlInput.addEventListener('input', render);
+    capInput.addEventListener('input', render);
+
+    document.getElementById('dlBtn').addEventListener('click', function(){
+      if(!lastSvg) return;
+      const blob=new Blob([lastSvg],{type:'image/svg+xml'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='telejka-sexi-qr.svg';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>
