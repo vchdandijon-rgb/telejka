@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR kod yaratish — Telejka sexi</title>
+<title>QR kod yaratish — Andijon vagon deposi</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#15171a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="style.css">
+<script src="tema.js"></script>
 <style>
   .qr-wrap{max-width:460px;margin:0 auto;padding:20px 18px 40px;}
   .field{margin-bottom:14px;}
@@ -42,9 +43,14 @@
 <body>
   <header class="nameplate">
     <span class="rivet bl" aria-hidden="true"></span><span class="rivet br" aria-hidden="true"></span>
-    <div class="eyebrow">Admin vositasi</div>
-    <h1>QR kod generatori</h1>
-    <p>Sex portaliga kirish uchun bosmaga tayyor QR kod</p>
+    <div class="np-row">
+      <div class="np-text">
+        <div class="eyebrow">Andijon vagon deposi</div>
+        <h1>Vagon telejkalarini ta'mirlash sexi</h1>
+        <p>Sex portaliga kirish uchun bosmaga tayyor QR kod</p>
+      </div>
+      <button class="tema-btn" id="temaBtn" aria-label="Rejimni almashtirish">☀</button>
+    </div>
   </header>
   <div class="stripe" aria-hidden="true"></div>
 
@@ -57,7 +63,7 @@
 
     <div class="field">
       <label for="capInput">Chop etishdagi sarlavha</label>
-      <input class="url-box" id="capInput" value="Telejka sexi — elektron portal">
+      <input class="url-box" id="capInput" value="Andijon vagon deposi — telejka sexi">
     </div>
 
     <div class="qr-sheet" id="sheet">
@@ -78,7 +84,7 @@
     </p>
   </main>
 
-  <footer>Ichki foydalanish uchun · Telejka ta'mirlash sexi</footer>
+  <footer>Andijon vagon deposi · Ichki foydalanish uchun</footer>
 
   <script src="qr.js"></script>
   <script>
