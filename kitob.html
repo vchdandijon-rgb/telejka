@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Kitob — Telejka sexi</title>
+<meta name="theme-color" content="#15171a">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
+<style>
+  body{display:flex;flex-direction:column;min-height:100vh;background:#0e0f11;}
+  .vbar{
+    display:flex;align-items:center;gap:10px;
+    background:var(--surface);border-bottom:1px solid var(--border);
+    padding:9px 12px;position:sticky;top:0;z-index:10;
+  }
+  .vbar .v-back{
+    background:none;border:1px solid var(--border);color:var(--text-dim);
+    padding:7px 11px;border-radius:var(--radius);cursor:pointer;
+    font-size:13px;white-space:nowrap;font-family:inherit;
+  }
+  .vbar .v-back:hover{color:var(--text);border-color:var(--accent);}
+  .v-title{
+    flex:1;min-width:0;font-family:'Oswald','Arial Narrow',system-ui,sans-serif;
+    text-transform:uppercase;font-size:14px;letter-spacing:.02em;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);
+  }
+  .v-dl{
+    background:none;border:1px solid var(--border);color:var(--text-dim);
+    width:34px;height:34px;border-radius:var(--radius);cursor:pointer;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:15px;
+    text-decoration:none;
+  }
+  .v-dl:hover{color:var(--accent);border-color:var(--accent);}
+
+  .pages{flex:1;padding:12px 8px 30px;display:flex;flex-direction:column;
+    align-items:center;gap:12px;}
+  .pg{
+    background:#fff;width:100%;max-width:900px;border-radius:3px;
+    box-shadow:0 2px 10px rgba(0,0,0,.5);position:relative;
+  }
+  .pg canvas{display:block;width:100%;height:auto;border-radius:3px;}
+  .pg-ph{
+    display:flex;align-items:center;justify-content:center;
+    background:#1c1f22;color:#6b6e70;border:1px solid var(--border);
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;
+    border-radius:3px;
+  }
+  .v-status{
+    color:var(--text-dim);text-align:center;padding:40px 20px;font-size:14px;line-height:1.6;
+  }
+  .v-status .sp{
+    display:block;width:26px;height:26px;margin:0 auto 14px;
+    border:3px solid var(--border);border-top-color:var(--accent);
+    border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .v-err{color:#d9756a;}
+  .v-fallback{
+    display:inline-block;margin-top:14px;background:var(--accent);color:#1a1a1a;
+    padding:11px 18px;border-radius:var(--radius);font-weight:600;text-decoration:none;
+  }
+  .v-count{
+    font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;
+    color:var(--text-dim);flex:none;
+  }
+  @media (prefers-reduced-motion: reduce){.v-status .sp{animation:none;}}
+</style>
+</head>
+<body>
+
+<div class="vbar">
+  <button class="v-back" id="backBtn">← Ortga</button>
+  <span class="v-title" id="vTitle">Yuklanmoqda...</span>
+  <span class="v-count" id="vCount"></span>
+  <a class="v-dl" id="dlLink" download title="Yuklab olish" aria-label="Yuklab olish">⤓</a>
+</div>
+
+<div class="pages" id="pages">
+  <div class="v-status"><span class="sp" aria-hidden="true"></span>Kitob yuklanmoqda...</div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  var file = params.get('f') || '';
+  var nom  = params.get('nom') || 'Kitob';
+
+  var titleEl = document.getElementById('vTitle');
+  var countEl = document.getElementById('vCount');
+  var pagesEl = document.getElementById('pages');
+  var dlLink  = document.getElementById('dlLink');
+
+  titleEl.textContent = nom;
+  document.title = nom + ' — Telejka sexi';
+
+  document.getElementById('backBtn').addEventListener('click', function () {
+    if (history.length > 1) history.back();
+    else location.href = 'index.html#kutubxona';
+  });
+
+  function status(html, isErr) {
+    pagesEl.innerHTML = '<div class="v-status' + (isErr ? ' v-err' : '') + '">' + html + '</div>';
+  }
+
+  // Faqat shu sayt ichidagi nisbiy manzillarga ruxsat
+  if (!file || /^[a-z]+:/i.test(file) || file.indexOf('..') !== -1) {
+    status('Kitob manzili noto\u2018g\u2018ri.', true);
+    return;
+  }
+  dlLink.href = file;
+
+  var fallback = '<div class="v-fallback-wrap">Kitobni ko\u2018rsatib bo\u2018lmadi.<br>' +
+    'Uni telefoningizga yuklab olib ochishingiz mumkin.<br>' +
+    '<a class="v-fallback" href="' + file.replace(/"/g, '&quot;') + '" download>Yuklab olish</a></div>';
+
+  // PDF.js ni yuklaymiz
+  var CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  var s = document.createElement('script');
+  s.src = CDN + 'pdf.min.js';
+  s.onerror = function () {
+    status('Internet aloqasi sust bo\u2018lgani uchun ko\u2018ruvchi yuklanmadi.<br>' + fallback, true);
+  };
+  s.onload = function () {
+    var pdfjsLib = window.pdfjsLib;
+    if (!pdfjsLib) { status(fallback, true); return; }
+    pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + 'pdf.worker.min.js';
+
+    pdfjsLib.getDocument(file).promise.then(function (pdf) {
+      pagesEl.innerHTML = '';
+      countEl.textContent = pdf.numPages + ' bet';
+
+      var wrappers = [];
+      // Har bir bet uchun joy tayyorlaymiz (o'lchamni birinchi betdan olamiz)
+      pdf.getPage(1).then(function (p1) {
+        var vp = p1.getViewport({ scale: 1 });
+        var ratio = vp.height / vp.width;
+
+        for (var i = 1; i <= pdf.numPages; i++) {
+          var d = document.createElement('div');
+          d.className = 'pg pg-ph';
+          d.dataset.page = i;
+          d.style.height = Math.round(Math.min(900, pagesEl.clientWidth - 16) * ratio) + 'px';
+          d.textContent = i + '-bet';
+          pagesEl.appendChild(d);
+          wrappers.push(d);
+        }
+
+        var rendered = {};
+        function renderPage(el) {
+          var n = +el.dataset.page;
+          if (rendered[n]) return;
+          rendered[n] = true;
+          pdf.getPage(n).then(function (page) {
+            var targetW = Math.min(900, pagesEl.clientWidth - 16);
+            var dpr = Math.min(window.devicePixelRatio || 1, 2);
+            var base = page.getViewport({ scale: 1 });
+            var scale = (targetW / base.width) * dpr;
+            var vp2 = page.getViewport({ scale: scale });
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.floor(vp2.width);
+            canvas.height = Math.floor(vp2.height);
+            var ctx = canvas.getContext('2d');
+            page.render({ canvasContext: ctx, viewport: vp2 }).promise.then(function () {
+              el.classList.remove('pg-ph');
+              el.style.height = '';
+              el.textContent = '';
+              el.appendChild(canvas);
+            }).catch(function () { rendered[n] = false; });
+          }).catch(function () { rendered[n] = false; });
+        }
+
+        // Ko'rinadigan betlarnigina chizamiz (telefon xotirasini tejash uchun)
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) { if (e.isIntersecting) renderPage(e.target); });
+          }, { rootMargin: '600px 0px' });
+          wrappers.forEach(function (w) { io.observe(w); });
+        } else {
+          wrappers.forEach(renderPage);
+        }
+      });
+    }).catch(function () {
+      status('Kitobni ochib bo\u2018lmadi. Fayl topilmadi yoki buzilgan.<br>' + fallback, true);
+    });
+  };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
