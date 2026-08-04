@@ -38,13 +38,16 @@
     kutubxona:  arr(typeof KITOBLAR   !== 'undefined' ? KITOBLAR   : null),
     darsliklar: arr(typeof DARSLIKLAR !== 'undefined' ? DARSLIKLAR : null),
     testlar:    arr(typeof TESTLAR    !== 'undefined' ? TESTLAR    : null),
+    shablonlar: arr(typeof SHABLONLAR !== 'undefined' ? SHABLONLAR : null),
+    zonalar:    arr(typeof ZONALAR    !== 'undefined' ? ZONALAR    : null),
   };
+  var BOLIMLAR = ['xodimlar','kutubxona','darsliklar','testlar','shablonlar','zonalar'];
 
   /* data.js dagi nashr etilgan ma'lumotning "barmoq izi".
      Qoralama shu izga bog'lanadi: data.js yangilansa, eski qoralama
      avtomatik bekor qilinadi va sayt yangi ma'lumotni ko'rsatadi. */
   function fingerprint() {
-    const s = JSON.stringify([store.xodimlar, store.kutubxona, store.darsliklar, store.testlar]);
+    const s = JSON.stringify(BOLIMLAR.map(function (k) { return store[k]; }));
     let h = 5381;
     for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
     return s.length + ':' + h.toString(36);
@@ -66,18 +69,14 @@
       draftEskirdi = true;
       return;
     }
-    ['xodimlar','kutubxona','darsliklar','testlar'].forEach(k => {
-      if (Array.isArray(d[k])) store[k] = d[k];
-    });
+    BOLIMLAR.forEach(k => { if (Array.isArray(d[k])) store[k] = d[k]; });
     hasDraft = true;
   })();
 
   const saveDraft = () => {
-    LS.set(DRAFT_KEY, JSON.stringify({
-      nashr: NASHR,
-      xodimlar: store.xodimlar, kutubxona: store.kutubxona,
-      darsliklar: store.darsliklar, testlar: store.testlar,
-    }));
+    const paket = { nashr: NASHR };
+    BOLIMLAR.forEach(function (k) { paket[k] = store[k]; });
+    LS.set(DRAFT_KEY, JSON.stringify(paket));
     hasDraft = true;
     renderBar();
   };
@@ -95,6 +94,8 @@
     kutubxona:  { title:'Kutubxona',  icon:'\u{1F4DA}', unit:'kitob',   yangi:'Yangi kitob' },
     darsliklar: { title:'Darsliklar', icon:'\u{1F393}', unit:'darslik', yangi:'Yangi darslik' },
     testlar:    { title:'Testlar',    icon:'\u{1F4DD}', unit:'test',    yangi:'Yangi test' },
+    shablonlar: { title:'Shablonlar',  icon:'\u{1F4D0}', unit:'shablon', yangi:'Yangi shablon', gal:true },
+    zonalar:    { title:'Defektoskop zonalari', icon:'\u{1F50D}', unit:'zona', yangi:'Yangi zona', gal:true },
   };
 
   const FIELDS = {
@@ -115,6 +116,16 @@
       { k:'davomiyligi', label:'Davomiyligi',   hint:'masalan: 45 daq' },
       { k:'daraja',      label:'Daraja',        hint:'Boshlang\u2018ich / O\u2018rta / Yuqori' },
       { k:'havola',      label:'Fayl havolasi' },
+    ],
+    shablonlar: [
+      { k:'nom',  label:'Shablon nomi', req:true },
+      { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar/shablon-1.jpg' },
+      { k:'izoh', label:'Izoh \u2014 o\u2018lchash tartibi, o\u2018lchamlar', hint:'keyinroq to\u2018ldirsangiz ham bo\u2018ladi' },
+    ],
+    zonalar: [
+      { k:'nom',  label:'Detal / zona nomi', req:true },
+      { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar/zona-ram.jpg' },
+      { k:'izoh', label:'Izoh \u2014 nazorat usuli, davriyligi', hint:'keyinroq to\u2018ldirsangiz ham bo\u2018ladi' },
     ],
   };
 
@@ -167,7 +178,9 @@
       renderQuiz();
     } else if (SECTIONS[raw]) {
       quiz = null;
-      if (raw === 'testlar') renderTests(); else renderList(raw);
+      if (raw === 'testlar') renderTests();
+      else if (SECTIONS[raw].gal) renderGallery(raw);
+      else renderList(raw);
     } else {
       quiz = null;
       renderDashboard();
@@ -265,6 +278,75 @@
       clearTimeout(t); const v = e.target.value; t = setTimeout(() => draw(v), 120);
     });
     draw('');
+  }
+
+  /* ================= GALEREYA (shablonlar, zonalar) ================= */
+  function galCard(key, it, idx) {
+    const rasm = it.rasm
+      ? '<img src="' + esc(it.rasm) + '" alt="' + esc(it.nom) + '" loading="lazy">'
+      : '<span class="gal-ph">Rasm qo\u2018shilmagan</span>';
+    return '<figure class="gal-item">' +
+      '<button class="gal-img" data-img="' + key + ':' + idx + '"' + (it.rasm ? '' : ' disabled') +
+      ' aria-label="' + esc(it.nom) + ' \u2014 kattalashtirish">' + rasm + '</button>' +
+      '<figcaption class="gal-cap"><span class="gal-nom">' + esc(it.nom) + '</span>' +
+      (it.izoh ? '<span class="gal-izoh">' + esc(it.izoh) + '</span>' : '') + '</figcaption>' +
+      rowTools(key, idx) + '</figure>';
+  }
+
+  function renderGallery(key) {
+    const s = SECTIONS[key];
+    const items = store[key];
+    app.innerHTML = head(s.title, items.length + ' ta', '', 'Bosh sahifa') + addBtn(key) +
+      (items.length
+        ? '<label class="sr-only" for="searchBox">' + esc(s.title) + ' ichidan qidirish</label>' +
+          '<input class="search" id="searchBox" type="search" autocomplete="off" placeholder="Qidirish...">' +
+          '<div class="gallery" id="galBox"></div>'
+        : '<div class="empty-state">Bu bo\u2018limda hozircha rasm yo\u2018q.' +
+          (isAdmin ? '' : '<br><span class="hint-sm">Admin bo\u2018lib kirib qo\u2018shishingiz mumkin.</span>') +
+          '</div>');
+    if (!items.length) return;
+
+    const box = document.getElementById('galBox');
+    const inp = document.getElementById('searchBox');
+    function draw(q) {
+      const f = norm(q);
+      const rows = items.map((it, i) => [it, i])
+        .filter(pr => !f || norm(pr[0].nom).indexOf(f) !== -1 || norm(pr[0].izoh).indexOf(f) !== -1);
+      box.innerHTML = rows.length
+        ? rows.map(pr => galCard(key, pr[0], pr[1])).join('')
+        : '<div class="empty-state">"' + esc(q) + '" bo\u2018yicha hech narsa topilmadi.</div>';
+      if (f) announce(rows.length + ' ta natija');
+    }
+    let t;
+    inp.addEventListener('input', function (e) {
+      clearTimeout(t); const v = e.target.value; t = setTimeout(() => draw(v), 120);
+    });
+    draw('');
+  }
+
+  /* ---- Rasmni to'liq ekranda ochish ---- */
+  function ochRasm(key, idx) {
+    const it = store[key][idx];
+    if (!it || !it.rasm) return;
+    const ov = document.createElement('div');
+    ov.className = 'lightbox';
+    ov.innerHTML = '<button class="lb-close" aria-label="Yopish">\u2715</button>' +
+      '<img src="' + esc(it.rasm) + '" alt="' + esc(it.nom) + '">' +
+      '<div class="lb-cap">' + esc(it.nom) +
+      (it.izoh ? '<span>' + esc(it.izoh) + '</span>' : '') + '</div>';
+    document.body.appendChild(ov);
+    document.body.classList.add('noscroll');
+    function yop() {
+      ov.remove();
+      document.body.classList.remove('noscroll');
+      document.removeEventListener('keydown', esc2);
+    }
+    function esc2(e) { if (e.key === 'Escape') yop(); }
+    ov.addEventListener('click', function (e) {
+      if (e.target === ov || e.target.closest('.lb-close')) yop();
+    });
+    document.addEventListener('keydown', esc2);
+    ov.querySelector('.lb-close').focus();
   }
 
   /* ================= TESTLAR ================= */
@@ -529,6 +611,8 @@
       block('XODIMLAR', store.xodimlar, '1) XODIMLAR \u2014 sex shtati') + '\n' +
       block('KITOBLAR', store.kutubxona, '2) KUTUBXONA \u2014 elektron kitoblar') + '\n' +
       block('DARSLIKLAR', store.darsliklar, '3) DARSLIKLAR \u2014 o\u2018quv materiallari') + '\n' +
+      block('SHABLONLAR', store.shablonlar, '5) SHABLONLAR \u2014 rasm va nomi') + '\n' +
+      block('ZONALAR', store.zonalar, '6) DEFEKTOSKOP NAZORATIDAN O\u2018TUVCHI ZONALAR') + '\n' +
       '/* 4) TESTLAR \u2014 "togri" to\u2018g\u2018ri javob indeksi (0 dan boshlanadi) */\n' +
       'const TESTLAR = [\n' + testRows + (testRows ? ',' : '') + '\n];\n';
   }
@@ -566,6 +650,13 @@
     if (t.closest('[data-retry]')) {
       quiz = { ti:quiz.ti, qi:0, score:0, answered:false, wrong:[] };
       renderQuiz(); return;
+    }
+
+    const im = t.closest('[data-img]');
+    if (im && !im.disabled) {
+      const parts = im.getAttribute('data-img').split(':');
+      ochRasm(parts[0], +parts[1]);
+      return;
     }
 
     const act = t.closest('[data-act]');
