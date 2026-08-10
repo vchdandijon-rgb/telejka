@@ -437,3 +437,45 @@ textarea.f-in{resize:vertical;line-height:1.5;}
 @media (min-width:560px){
   .gallery{grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));}
 }
+
+/* ============================================================
+   SHABLONLAR BO'LIMI — ko'p qatorli izohlar uchun qo'shimcha
+   (2026, РД 32 ЦВ 050-2020 shablonlari qo'shilganda kiritildi)
+   ============================================================ */
+
+/* Kartadagi izoh: qatorlar saqlanadi, 4 qatordan keyin qirqiladi */
+.gal-izoh{
+  white-space:pre-line;
+  display:-webkit-box;
+  -webkit-line-clamp:4;
+  line-clamp:4;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+/* Uzun nomlar kartada to'liq ko'rinsin */
+.gal-nom{ -webkit-line-clamp:none; }
+
+/* To'liq ekran (lightbox): izoh to'liq, chapdan tekislangan, aylantiriladi */
+.lightbox{ justify-content:flex-start; overflow-y:auto; }
+.lightbox img{ max-height:min(62vh, 620px); flex:none; }
+.lb-cap{
+  max-width:760px;
+  padding-bottom:24px;
+}
+.lb-cap span{
+  white-space:pre-line;
+  text-align:left;
+  font-size:13.5px;
+  line-height:1.6;
+}
+
+/* Katta ekranda galereya kartalari kengroq bo'lsin */
+@media (min-width:900px){
+  .gallery{ grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); }
+}
+
+/* To'liq ekranda sarlavha yorug' fonda ham o'qilsin (yorug' rejim uchun tuzatish) */
+.lightbox .lb-cap{ color:#f2f4f6; }
+.lightbox .lb-cap span{ color:#c6ccd4; }
+.lightbox img{ margin-bottom:6px; }
