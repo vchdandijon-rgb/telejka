@@ -1,0 +1,140 @@
+/* ============================================================
+   DARSLIKLAR — sahifa uslubi
+   style.css dagi rang o'zgaruvchilaridan foydalanadi
+   ============================================================ */
+.dars-body{background:var(--bg);color:var(--text);}
+
+.dars-bar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+.d-back{
+  text-decoration:none;color:var(--text-dim);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:7px 11px;font-size:13px;white-space:nowrap;
+}
+.d-back:hover{color:var(--accent);border-color:var(--accent);}
+.d-bar-title{
+  flex:1;min-width:0;font-family:'Saira Condensed','Arial Narrow',system-ui,sans-serif;
+  text-transform:uppercase;letter-spacing:.04em;font-size:14px;color:var(--text-dim);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+.dars-wrap{max-width:780px;margin:0 auto;padding:18px 14px 60px;}
+
+.d-head{border-bottom:2px solid var(--accent);padding-bottom:14px;margin-bottom:6px;}
+.d-num{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:12px;color:var(--accent);letter-spacing:.06em;
+}
+.d-head h1{
+  font-family:'Saira Condensed','Arial Narrow',system-ui,sans-serif;
+  text-transform:uppercase;font-size:clamp(22px,5vw,31px);line-height:1.12;
+  margin:6px 0 8px;letter-spacing:.01em;
+}
+.d-lead{color:var(--text-dim);font-size:15px;line-height:1.55;margin:0 0 12px;}
+.d-meta{display:flex;flex-wrap:wrap;gap:8px;}
+.d-meta span{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11.5px;
+  color:var(--text-dim);background:var(--surface-raised);
+  border:1px solid var(--border);border-radius:99px;padding:4px 10px;
+}
+
+.dars-wrap h2{
+  font-family:'Saira Condensed','Arial Narrow',system-ui,sans-serif;
+  text-transform:uppercase;font-size:19px;letter-spacing:.02em;
+  margin:30px 0 10px;padding-left:11px;border-left:4px solid var(--accent);
+}
+.dars-wrap p{font-size:15.5px;line-height:1.65;margin:0 0 12px;}
+.dars-wrap ul,.dars-wrap ol{margin:0 0 14px;padding-left:22px;}
+.dars-wrap li{font-size:15.5px;line-height:1.6;margin-bottom:7px;}
+.dars-wrap b{color:var(--text);font-weight:600;}
+
+.t-wrap{overflow-x:auto;margin:0 0 16px;-webkit-overflow-scrolling:touch;}
+.dars-wrap table{
+  border-collapse:collapse;width:100%;min-width:340px;
+  background:var(--surface);font-size:14px;
+}
+.dars-wrap th{
+  background:var(--surface-raised);color:var(--text);
+  text-align:left;font-weight:600;font-size:13px;
+  padding:9px 10px;border:1px solid var(--border);
+}
+.dars-wrap td{padding:8px 10px;border:1px solid var(--border);line-height:1.45;vertical-align:top;}
+.dars-wrap tbody tr:nth-child(even) td{background:var(--surface-raised);}
+
+.d-note{
+  background:var(--signal-soft);border-left:4px solid var(--signal);
+  border-radius:0 var(--radius) var(--radius) 0;
+  padding:11px 13px;margin:0 0 16px;
+}
+.d-note b{display:block;color:var(--signal);font-size:12px;
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.d-note span{font-size:14.5px;line-height:1.6;display:block;}
+
+.d-key{
+  background:var(--accent-soft);border:1px solid var(--accent-dim);
+  border-radius:var(--radius);padding:12px 14px;margin:0 0 16px;
+  font-size:15px;line-height:1.6;
+}
+
+.d-formula{
+  text-align:center;margin:0 0 16px;padding:14px 10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+}
+.d-formula .fx{
+  display:block;font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:17px;font-weight:500;color:var(--accent);line-height:1.4;
+}
+.d-formula .fn{display:block;margin-top:6px;font-size:12.5px;color:var(--text-dim);}
+
+.d-fig{margin:0 0 18px;}
+.d-fig img{
+  width:100%;height:auto;display:block;border-radius:var(--radius);
+  border:1px solid var(--border);background:#fff;
+}
+.d-fig figcaption{
+  margin-top:7px;font-size:12.5px;color:var(--text-dim);
+  text-align:center;line-height:1.45;
+}
+
+.d-quiz{margin-top:38px;padding-top:6px;border-top:2px solid var(--border);}
+.d-quiz-hint{color:var(--text-dim);font-size:13.5px;margin-bottom:12px !important;}
+.d-q{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);margin-bottom:8px;overflow:hidden;
+}
+.d-q summary{
+  cursor:pointer;padding:12px 14px;font-size:15px;line-height:1.5;
+  font-weight:500;list-style:none;
+}
+.d-q summary::-webkit-details-marker{display:none;}
+.d-q summary::after{content:' ▾';color:var(--accent);}
+.d-q[open] summary::after{content:' ▴';}
+.d-q summary:hover{color:var(--accent);}
+.d-a{
+  padding:0 14px 13px;font-size:14.5px;line-height:1.62;
+  color:var(--text-dim);border-top:1px solid var(--border);padding-top:11px;
+}
+
+.d-nav{display:flex;justify-content:space-between;gap:10px;margin-top:34px;}
+.d-nav a{
+  flex:1;text-decoration:none;color:var(--text);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:11px 13px;font-size:13.5px;line-height:1.4;
+}
+.d-nav a:hover{border-color:var(--accent);color:var(--accent);}
+.d-next{text-align:right;}
+.d-nav span{flex:1;}
+
+.d-src{
+  margin-top:28px;padding-top:14px;border-top:1px solid var(--border);
+  font-size:12px !important;color:var(--text-dim);line-height:1.55;
+}
+
+@media (max-width:560px){
+  .d-nav{flex-direction:column;}
+  .d-next{text-align:left;}
+}
