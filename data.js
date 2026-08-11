@@ -36,14 +36,28 @@ const KITOBLAR = [
   {"nom":"Сварка_и_наплавка_корпуса_буксы_Технологическая_инструкция_ТИ_05","muallif":"","format":"PDF","mavzu":"normativ hujjat","havola":"kitoblar/Сварка_и_наплавка_корпуса_буксы_Технологическая_инструкция_ТИ_05.pdf"},
 ];
 
-/* 3) DARSLIKLAR — o'quv materiallari */
+/* 3) DARSLIKLAR — o'quv materiallari
+      1-10: РД 32 ЦВ 050-2020 (o'lchash metodikasi)
+      11-17: РД 32 ЦВ 052-2009 (umumiy ta'mir rahbariyati)
+      Har bir darslik darsliklar/ papkasidagi alohida HTML sahifada ochiladi. */
 const DARSLIKLAR = [
-  {"nom":"Telejka konstruksiyasi va tuzilishi","davomiyligi":"45 daq","daraja":"Boshlang'ich"},
-  {"nom":"Payvandlash texnikasi: amaliy asoslar","davomiyligi":"60 daq","daraja":"O'rta"},
-  {"nom":"Gidravlik nasos va shlanglarni almashtirish","davomiyligi":"40 daq","daraja":"O'rta"},
-  {"nom":"Elektr sxemalarini o'qish","davomiyligi":"50 daq","daraja":"Yuqori"},
-  {"nom":"Mehnat muhofazasi bo'yicha yo'riqnoma","davomiyligi":"30 daq","daraja":"Boshlang'ich"},
-  {"nom":"Nosozliklarni aniqlash va diagnostika","davomiyligi":"55 daq","daraja":"Yuqori"},
+  {"nom": "Yuk vagon aravachasi va uni ta'mirlash tizimi", "davomiyligi": "30 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/01-yuk-vagon-aravachasi-va-uni-tamirlash-tizimi.html"},
+  {"nom": "РД 32 ЦВ 050-2020 metodikasi bilan tanishuv", "davomiyligi": "25 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/02-rd-32-cv-050-2020-metodikasi.html"},
+  {"nom": "O'lchash shartlari va o'lchov vositalari", "davomiyligi": "35 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/03-olchash-shartlari-va-olchov-vositalari.html"},
+  {"nom": "Nadressor balkasi: prizma qiya yuzalari burchagini nazorat qilish", "davomiyligi": "40 daq", "daraja": "O'rta", "havola": "darsliklar/04-nadressor-balkasi-prizma-qiya-yuzalari-burchag.html"},
+  {"nom": "Nadressor balkasi: «З» tayanch yuza uzunligi", "davomiyligi": "40 daq", "daraja": "O'rta", "havola": "darsliklar/05-nadressor-balkasi-z-tayanch-yuza-uzunligi.html"},
+  {"nom": "Nadressor balkasi: qalinlik, burtlar, skolzun va qattiqlik", "davomiyligi": "35 daq", "daraja": "O'rta", "havola": "darsliklar/06-nadressor-balkasi-qalinlik-burtlar-skolzun-va.html"},
+  {"nom": "Yon rama: buksa proyomi va bazaviy o'lcham «М»", "davomiyligi": "40 daq", "daraja": "O'rta", "havola": "darsliklar/07-yon-rama-buksa-proyomi-va-bazaviy-olcham-m.html"},
+  {"nom": "Yon rama: friksion plankalar", "davomiyligi": "45 daq", "daraja": "Yuqori", "havola": "darsliklar/08-yon-rama-friksion-plankalar.html"},
+  {"nom": "Friksion pona va buksa zazorlari", "davomiyligi": "45 daq", "daraja": "Yuqori", "havola": "darsliklar/09-friksion-pona-va-buksa-zazorlari.html"},
+  {"nom": "Ressor komplekti va friksion ponalar holati", "davomiyligi": "40 daq", "daraja": "O'rta", "havola": "darsliklar/10-ressor-komplekti-va-friksion-ponalar-holati.html"},
+  {"nom": "Aravacha modellari va texnik xarakteristikalari", "davomiyligi": "35 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/11-aravacha-modellari-va-texnik-xarakteristikalari.html"},
+  {"nom": "Aravachani qismlarga ajratish (razborka)", "davomiyligi": "35 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/12-aravachani-qismlarga-ajratish.html"},
+  {"nom": "Dеfektatsiya — brak mezonlari", "davomiyligi": "45 daq", "daraja": "O'rta", "havola": "darsliklar/13-defektatsiya-brak-mezonlari.html"},
+  {"nom": "Yon ramalarni ta'mirlash", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/14-yon-ramalarni-tamirlash.html"},
+  {"nom": "Nadressor balkasini ta'mirlash", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/15-nadressor-balkasini-tamirlash.html"},
+  {"nom": "Ta'mirdan keyin aravachani yig'ish", "davomiyligi": "45 daq", "daraja": "O'rta", "havola": "darsliklar/16-tamirdan-keyin-aravachani-yigish.html"},
+  {"nom": "Ta'mirdan chiqarishdagi yakuniy nazorat", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/17-tamirdan-chiqarishdagi-yakuniy-nazorat.html"},
 ];
 
 /* 5) SHABLONLAR — o'lchov shablonlari va o'lchash tartibi
