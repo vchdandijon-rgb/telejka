@@ -1,7 +1,7 @@
 /* ============================================================
    IMTIHON SAVOLLARI — telejka ta'mirlash sexi
    Manbalar: РД 32 ЦВ 050-2020, РД 32 ЦВ 052-2009, ПР НК В.3
-   10 etap, 210 ta savol. Har bir savol hujjat bandiga asoslangan.
+   12 etap, 250 ta savol. Har bir savol hujjat bandiga asoslangan.
    ============================================================ */
 const ETAPLAR = [
   {
@@ -221,6 +221,33 @@ const ETAPLAR = [
     ],
   },
   {
+    nom: "«Pona – planka» uzeli va klepka ishlari",
+    daraja: "Yuqori",
+    tavsif: "Pona turlari va chizmalari, almashtirish qoidalari, plankalarni klepka qilish va zaklepkalar.",
+    savollar: [
+      {"savol": "«Pona – friksion planka» uzeli nechta elementdan iborat?", "variantlar": ["To'rtta", "Uchta", "Beshta", "Ikkita"], "togri": 1, "izoh": "052-2009, band 10.1 — tarkibiy planka, pona va balkaning qiya yuzasi"},
+      {"savol": "Depo ta'mirida 18-100 modeliga qaysi chizma bo'yicha pona o'rnatiladi?", "variantlar": ["1699.04.007", "ВАГР-0113.50.00.002", "М 1698.00.003 yoki М 1698.00.003-01 (СЧ 35)", "100.30.001-1"], "togri": 2, "izoh": "052-2009, band 10.1.2"},
+      {"savol": "Po'lat friksion ponani ta'mirlash mumkinmi?", "variantlar": ["Yo'q, taqiqlanadi", "Faqat depo ta'mirida", "Ha, naplavka bilan", "Ha, payvand bilan"], "togri": 0, "izoh": "052-2009, band 10.1.2"},
+      {"savol": "Bitta vagon ostidagi aravachalarga po'lat va cho'yan ponalarni birga o'rnatish mumkinmi?", "variantlar": ["Ha", "Faqat kapital ta'mirda", "Faqat depo ta'mirida", "Yo'q, taqiqlanadi"], "togri": 3, "izoh": "052-2009, band 10.1.2"},
+      {"savol": "С 03.04 loyihasi bo'yicha friksion pona qanday o'rnatiladi?", "variantlar": ["Faqat С 03.04 loyihasidagi friksion planka bilan juft holda", "Plankasiz", "Har qanday planka bilan", "М 1698 plankasi bilan"], "togri": 0, "izoh": "052-2009, band 10.1.2"},
+      {"savol": "Kapital ta'mirda friksion ponalar bilan nima qilinadi?", "variantlar": ["Yangi cho'yan ponalarga almashtiriladi", "Qoldiriladi", "O'lchanadi", "Naplavka qilinadi"], "togri": 0, "izoh": "052-2009, band 10.2"},
+      {"savol": "ВАГР-0113.50.00.002 chizmasi bo'yicha ponalar qanday normativda o'rnatiladi?", "variantlar": ["160 ming km dan ko'p bo'lmagan", "110 ming km", "Cheklov yo'q", "210 ming km"], "togri": 0, "izoh": "052-2009, 10.1.2-band izohi"},
+      {"savol": "Friksion ponani o'rnatish va almashtirish qanday bajariladi?", "variantlar": ["Komplekt bilan", "Bittalab", "Faqat bir tomondan", "Ixtiyoriy"], "togri": 0, "izoh": "052-2009, 10.1.2-band izohi"},
+      {"savol": "Depo ta'mirida ponani almashtirmasdan qoldirish uchun umumiy yeyilish qancha bo'lishi kerak?", "variantlar": ["3 mm gacha, bir tomondan 2 mm dan ko'p emas", "2 mm gacha", "5 mm gacha", "Cheklov yo'q"], "togri": 0, "izoh": "052-2009, band 10.3"},
+      {"savol": "Kapital ta'mirda 18-100 modeliga qanday friksion plankalar o'rnatiladi?", "variantlar": ["М 1698 ПКБ ЦВ loyihasi bo'yicha yangi tarkibiy plankalar", "Eskilari qoldiriladi", "16 mm li yaxlit plankalar", "С 03.04 plankalari"], "togri": 0, "izoh": "052-2009, band 10.4"},
+      {"savol": "Qo'zg'almas friksion plankalar vertikal tekislikda qanday joylashishi kerak?", "variantlar": ["Qat'iy parallel", "Parallel bo'lmasligi — pastga 4…10 mm ga kengayishi kerak", "Farqi yo'q", "Pastga toraytirilgan"], "togri": 1, "izoh": "052-2009, band 10.6"},
+      {"savol": "«Г» va «Д» o'lchamlari farqi («Ж» va «З» nuqtalarida) qancha bo'lishi mumkin?", "variantlar": ["2 mm", "1 mm", "3 mm dan ko'p emas", "5 mm"], "togri": 2, "izoh": "052-2009, band 10.6"},
+      {"savol": "«Е» o'lchami qanday aniqlanadi?", "variantlar": ["O'lchanmaydi", "«Г» va «Д» yig'indisi bilan", "«Г» va «Д» ning yarim farqi bilan", "«Г» ni 2 ga bo'lib"], "togri": 2, "izoh": "052-2009, band 10.6"},
+      {"savol": "Klepka ishlaridan oldin ishlangan yuza qanday g'adir-budurlikka mos bo'lishi kerak?", "variantlar": ["Ra 12,5", "Talab yo'q", "Ra 6,3", "Ra 25"], "togri": 0, "izoh": "052-2009, band 10.7"},
+      {"savol": "Yon ramada zaklepkalar uchun teshik diametri qancha bo'lishi kerak?", "variantlar": ["Ø 20 (+0,84) mm", "Ø 23 (+0,84) mm", "Ø 21 (+0,84) mm", "Ø 18 (+0,84) mm"], "togri": 2, "izoh": "052-2009, band 10.8"},
+      {"savol": "Plankalar qanday zaklepkalar bilan biriktiriladi?", "variantlar": ["Payvand bilan", "Yarim dumaloq kallakli, Ø 21 mm", "Botiq (potaynoy) kallakli, Ø 20 mm ГОСТ 10300", "Boltlar bilan"], "togri": 2, "izoh": "052-2009, band 10.8"},
+      {"savol": "Issiq klepka kuchi qancha bo'lishi kerak?", "variantlar": ["10 tk dan kam emas", "40 tk", "15 tk dan kam emas", "25 tk dan kam emas"], "togri": 3, "izoh": "052-2009, band 10.8"},
+      {"savol": "Zaklepkani qizdirish harorati qanday oraliqda bo'lishi kerak?", "variantlar": ["1200…1300 °C", "800…900 °C", "600…700 °C", "1050…1100 °C"], "togri": 3, "izoh": "052-2009, band 10.8"},
+      {"savol": "Bo'shashgan zaklepkalar bilan nima qilinadi?", "variantlar": ["Payvandlanadi", "Yangisiga almashtiriladi, planka qayta klepkalanadi", "Tortiladi", "Chekanka qilinadi"], "togri": 1, "izoh": "052-2009, band 10.9 — payvandlash, tortish va chekanka taqiqlanadi"},
+      {"savol": "Elektropayvand bilan payvandlangan friksion plankali yon ramani ta'mirdan chiqarish mumkinmi?", "variantlar": ["Faqat depo ta'mirida", "Faqat 18-100 uchun", "Taqiqlanadi", "Ha"], "togri": 2, "izoh": "052-2009, band 10.9"},
+    ],
+  },
+  {
     nom: "Buzmasdan nazorat (НК)",
     daraja: "Yuqori",
     tavsif: "МПК va ВТК usullari, zonalar, parametrlar, o'tkazish tartibi va baholash.",
@@ -250,6 +277,33 @@ const ETAPLAR = [
       {"savol": "НК ish joyida umumiy va mahalliy yoritilganlik qancha bo'lishi kerak?", "variantlar": ["1000 lk dan kam emas", "200 lk dan kam emas", "1500 lk", "500 lk dan kam emas"], "togri": 3, "izoh": "ПР НК В.3, band 4.3.3; МПК da ko'rikda 1000 lk"},
       {"savol": "UB nurlanish ishlatilganda ko'rinadigan yorug'lik qancha bo'lishi kerak?", "variantlar": ["100 lk", "300 lk", "20 lk dan ko'p emas", "500 lk"], "togri": 2, "izoh": "ПР НК В.3, band 4.3.4.2; UB quvvati 20 Вт/м² dan kam emas"},
       {"savol": "НК ish joyida havo va obyekt harorati qanday oraliqda bo'lishi kerak?", "variantlar": ["0 dan +30 °C", "+10 dan +50 °C", "Cheklov yo'q", "+5 dan +40 °C"], "togri": 3, "izoh": "ПР НК В.3, band 4.3.7"},
+    ],
+  },
+  {
+    nom: "Payvand, naplavka va materiallar",
+    daraja: "Usta",
+    tavsif: "Payvand va naplavka materiallari, rejimlar, prujinalarni brak qilish va ish joyi talablari.",
+    savollar: [
+      {"savol": "Prujinalar aravachadan qanday holatda yechiladi?", "variantlar": ["Faqat nosozlari", "Faqat kapital ta'mirda", "Texnik holatidan qat'i nazar hammasi", "Yechilmaydi"], "togri": 2, "izoh": "052-2009, band 11.1"},
+      {"savol": "Prujinani brak qilish uchun korroziya qancha bo'lishi kerak?", "variantlar": ["O'ram kesimi maydonining 5% dan ortiq", "Har qanday korroziya", "O'ram kesimi maydonining 20% dan ortiq", "O'ram kesimi maydonining 10% dan ortiq"], "togri": 3, "izoh": "052-2009, band 11.1"},
+      {"savol": "Yangi tayyorlangan prujinalar qaysi standartga mos bo'lishi shart?", "variantlar": ["ГОСТ 9246", "ГОСТ 32400", "ГОСТ 1452", "ГОСТ 14959"], "togri": 2, "izoh": "052-2009, band 11.1"},
+      {"savol": "Payvand va naplavka ishlari qaysi yo'riqnomalar bo'yicha bajariladi?", "variantlar": ["РД 32 ЦВ 050-2020", "Faqat ЦВ-201-2015", "ЦВ-201-2015 va ВНИИЖТ ning ТИ-05-01-06/НБ, ТИ-БР-2010", "ГОСТ 9467"], "togri": 2, "izoh": "052-2009, band 13.1"},
+      {"savol": "Payvand ishlari qayerda bajariladi?", "variantlar": ["Har qanday joyda", "Yig'uv uchastkasida", "Kantovatel va payvand uskunalari bilan jihozlangan maxsus payvand pozitsiyalarida", "Ochiq havoda"], "togri": 2, "izoh": "052-2009, band 13.1"},
+      {"savol": "Naplavka nima uchun bajariladi?", "variantlar": ["Og'irlikni oshirish uchun", "Yuzaga metall qo'shib, keyin mexanik ishlov bilan chizma o'lchamiga keltirish uchun", "Detalni bo'yash uchun", "Yoriqni yashirish uchun"], "togri": 1, "izoh": "052-2009, band 13.2"},
+      {"savol": "Flyus ostida avtomatik naplavkada qaysi flyus ishlatiladi?", "variantlar": ["ЭЖТ-1", "УОНИ-13/55", "АН-348-А ГОСТ 9087", "Св-08Г2С ГОСТ 2246"], "togri": 2, "izoh": "052-2009, band 13.3.1"},
+      {"savol": "Flyus ostida avtomatik naplavkada qaysi payvand simi ishlatiladi?", "variantlar": ["Св-08Г2С", "Св-10ХГ2СМФ yoki kukunli sim ПП-АН180МН", "ЭЖТ-1", "УОНИ-13/55"], "togri": 1, "izoh": "052-2009, band 13.3.1"},
+      {"savol": "Qoplamali elektrodlar bilan qo'lda yeyilishga chidamli naplavkada qaysi elektrod ishlatiladi?", "variantlar": ["УОНИ-13/55", "ЭЖТ-1 ТУ 1272-252-01124323-2008", "Св-08Г2С", "Э-50 А"], "togri": 1, "izoh": "052-2009, band 13.3.3"},
+      {"savol": "Himoya gazida naplavkada qaysi gaz ishlatiladi?", "variantlar": ["1-nav uglerod ikki oksidi ГОСТ 8050", "Argon", "Geliy", "Azot"], "togri": 0, "izoh": "052-2009, band 13.3.2"},
+      {"savol": "Boshqa markadagi naplavka materialini qo'llash uchun qanday shart bor?", "variantlar": ["Umuman mumkin emas", "Cheklov yo'q", "Naplavkada 240…300 HB qattiqlikni ta'minlasa va NTD da ko'zda tutilgan bo'lsa", "Faqat ВНИИЖТ ruxsati bilan"], "togri": 2, "izoh": "052-2009, band 13.3.4"},
+      {"savol": "Yeyilishga chidamlilik talab qilinmaydigan qo'lda payvandlashda qaysi elektrod ishlatiladi?", "variantlar": ["Св-10ХГ2СМФ", "Э-50 А ГОСТ 9467 (УОНИ-13/55 va boshqalar)", "ПП-АН180МН", "ЭЖТ-1"], "togri": 1, "izoh": "052-2009, band 13.4.1"},
+      {"savol": "Mexanizatsiyalangan payvandlashda (yeyilishga chidamlilik talab qilinmaganda) qaysi sim ishlatiladi?", "variantlar": ["Св-10ХГ2СМФ", "ПП-АН180МН", "ЭЖТ-1", "Св-08Г2С ГОСТ 2246"], "togri": 3, "izoh": "052-2009, band 13.4.2"},
+      {"savol": "Naplavka qilingan yuzalar qayerda mexanik ishlanadi?", "variantlar": ["Shlifovka mashinasi bilan", "Ixtisoslashtirilgan frezerlash, teshish va rendalash stanoklarida", "Ishlanmaydi", "Qo'lda bolg'a bilan"], "togri": 1, "izoh": "052-2009, band 13.5"},
+      {"savol": "Payvand ish joyi qanday ventilyatsiya bilan jihozlangan bo'lishi kerak?", "variantlar": ["Ventilyator", "Mahalliy so'rish ventilyatsiyasi", "Umumiy almashtirish ventilyatsiyasi", "Talab yo'q"], "togri": 1, "izoh": "052-2009, band 13.7"},
+      {"savol": "To'rt o'qli aravachaning biriktiruvchi balkasida payvand ishlari qaysi hujjat bo'yicha bajariladi?", "variantlar": ["ТК-232 I, II, III qismlari", "ЦВ-201-2015", "ТИ-БР-2010", "ТК-230 ПКБ ЦВ"], "togri": 0, "izoh": "052-2009, band 13.6"},
+      {"savol": "Texnologik jihozlarning tavsiya etiladigan ro'yxati qaysi ilovada berilgan?", "variantlar": ["Ж ilovasida", "Б ilovasida", "В ilovasida", "А ilovasida"], "togri": 3, "izoh": "052-2009, band 13.7"},
+      {"savol": "Naplavka qattiqligi nima uchun ikki tomondan chegaralangan?", "variantlar": ["Chegara yo'q", "O'lchash qulayligi uchun", "Yumshoq naplavka tez yeyiladi, qattiq naplavka mo'rt bo'lib yorilib ketadi", "Faqat an'ana"], "togri": 2, "izoh": "240…300 HB oralig'i (052-2009, 6.5 va 13.3.4-bandlar)"},
+      {"savol": "Naplavka qattiqligi qaysi standartlar bo'yicha o'lchanadi?", "variantlar": ["ГОСТ 1452 va ГОСТ 9246", "ГОСТ 9012-59 va ГОСТ 9013-59", "ГОСТ 8050", "ГОСТ 9087"], "togri": 1, "izoh": "052-2009, band 6.5 — ТЭМП 3 tipidagi qattiqlik o'lchagich"},
+      {"savol": "Yeyilishga chidamli naplavka bilan oddiy payvand orasidagi farq nimada?", "variantlar": ["Naplavka faqat kapital ta'mirda", "Oddiy payvand taqiqlanadi", "Naplavka ishqalanuvchi yuzalar uchun, oddiy payvand yoriqlarni bitirish uchun; material va rejim boshqacha", "Farq yo'q"], "togri": 2, "izoh": "052-2009, bandlar 13.3 va 13.4"},
     ],
   },
   {
