@@ -40,6 +40,7 @@ const KITOBLAR = [
       1-10:  РД 32 ЦВ 050-2020 (o'lchash metodikasi)
       11-17: РД 32 ЦВ 052-2009 (umumiy ta'mir rahbariyati)
       18-19: ПР НК В.3 (buzmasdan nazorat qoidalari)
+      20-21: РД 32 ЦВ 052-2009 (pona-planka uzeli, payvand va naplavka)
       Har bir darslik darsliklar/ papkasidagi alohida HTML sahifada ochiladi. */
 const DARSLIKLAR = [
   {"nom": "Yuk vagon aravachasi va uni ta'mirlash tizimi", "davomiyligi": "30 daq", "daraja": "Boshlang'ich", "havola": "darsliklar/01-yuk-vagon-aravachasi-va-uni-tamirlash-tizimi.html"},
@@ -61,6 +62,8 @@ const DARSLIKLAR = [
   {"nom": "Ta'mirdan chiqarishdagi yakuniy nazorat", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/17-tamirdan-chiqarishdagi-yakuniy-nazorat.html"},
   {"nom": "Buzmasdan nazorat (НК) — asoslar va zonalar", "davomiyligi": "50 daq", "daraja": "O'rta", "havola": "darsliklar/18-buzmasdan-nazorat-asoslar-va-zonalar.html"},
   {"nom": "МПК va ВТК o'tkazish, natijani baholash", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/19-mpk-va-vtk-otkazish-natijani-baholash.html"},
+  {"nom": "«Pona – friksion planka» uzelini ta'mirlash", "davomiyligi": "50 daq", "daraja": "Yuqori", "havola": "darsliklar/20-pona-friksion-planka-uzelini-tamirlash.html"},
+  {"nom": "Payvand, naplavka va ressor komplektiga talablar", "davomiyligi": "45 daq", "daraja": "Yuqori", "havola": "darsliklar/21-payvand-naplavka-va-ressor-komplekti.html"},
 ];
 
 /* 5) SHABLONLAR — o'lchov shablonlari va o'lchash tartibi
