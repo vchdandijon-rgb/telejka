@@ -40,8 +40,9 @@
     testlar:    arr(typeof TESTLAR    !== 'undefined' ? TESTLAR    : null),
     shablonlar: arr(typeof SHABLONLAR !== 'undefined' ? SHABLONLAR : null),
     zonalar:    arr(typeof ZONALAR    !== 'undefined' ? ZONALAR    : null),
+    kartalar:   arr(typeof KARTALAR   !== 'undefined' ? KARTALAR   : null),
   };
-  var BOLIMLAR = ['xodimlar','kutubxona','darsliklar','testlar','shablonlar','zonalar'];
+  var BOLIMLAR = ['xodimlar','kutubxona','darsliklar','testlar','shablonlar','kartalar','zonalar'];
 
   /* data.js dagi nashr etilgan ma'lumotning "barmoq izi".
      Qoralama shu izga bog'lanadi: data.js yangilansa, eski qoralama
@@ -95,6 +96,7 @@
     darsliklar: { title:'Darsliklar', icon:'\u{1F393}', unit:'darslik', yangi:'Yangi darslik' },
     testlar:    { title:'Testlar',    icon:'\u{1F4DD}', unit:'test',    yangi:'Yangi test' },
     shablonlar: { title:'Shablonlar',  icon:'\u{1F4D0}', unit:'shablon', yangi:'Yangi shablon', gal:true },
+    kartalar:   { title:'Defektatsiya kartalari', icon:'\u{1F50E}', unit:'karta', yangi:'Yangi karta', gal:true },
     zonalar:    { title:'Defektoskop zonalari', icon:'\u{1F50D}', unit:'zona', yangi:'Yangi zona', gal:true },
   };
 
@@ -121,6 +123,11 @@
       { k:'nom',  label:'Shablon nomi', req:true },
       { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar/shablon-1.jpg' },
       { k:'izoh', label:'Izoh \u2014 o\u2018lchash tartibi, o\u2018lchamlar', hint:'keyinroq to\u2018ldirsangiz ham bo\u2018ladi' },
+    ],
+    kartalar: [
+      { k:'nom',  label:'Detal va pozitsiya nomi', req:true },
+      { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar_dk/dk-rama-v2.jpg' },
+      { k:'izoh', label:'Nuqson, aniqlash usuli va qaror', hint:'brak / payvand / naplavka' },
     ],
     zonalar: [
       { k:'nom',  label:'Detal / zona nomi', req:true },
@@ -612,6 +619,7 @@
       block('KITOBLAR', store.kutubxona, '2) KUTUBXONA \u2014 elektron kitoblar') + '\n' +
       block('DARSLIKLAR', store.darsliklar, '3) DARSLIKLAR \u2014 o\u2018quv materiallari') + '\n' +
       block('SHABLONLAR', store.shablonlar, '5) SHABLONLAR \u2014 rasm va nomi') + '\n' +
+      block('KARTALAR', store.kartalar, '7) DEFEKTATSIYA KARTALARI \u2014 nuqson va qaror') + '\n' +
       block('ZONALAR', store.zonalar, '6) DEFEKTOSKOP NAZORATIDAN O\u2018TUVCHI ZONALAR') + '\n' +
       '/* 4) TESTLAR \u2014 "togri" to\u2018g\u2018ri javob indeksi (0 dan boshlanadi) */\n' +
       'const TESTLAR = [\n' + testRows + (testRows ? ',' : '') + '\n];\n';
