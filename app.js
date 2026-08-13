@@ -41,8 +41,9 @@
     shablonlar: arr(typeof SHABLONLAR !== 'undefined' ? SHABLONLAR : null),
     zonalar:    arr(typeof ZONALAR    !== 'undefined' ? ZONALAR    : null),
     kartalar:   arr(typeof KARTALAR   !== 'undefined' ? KARTALAR   : null),
+    chizmalar:  arr(typeof CHIZMALAR  !== 'undefined' ? CHIZMALAR  : null),
   };
-  var BOLIMLAR = ['xodimlar','kutubxona','darsliklar','testlar','shablonlar','kartalar','zonalar'];
+  var BOLIMLAR = ['xodimlar','kutubxona','darsliklar','testlar','shablonlar','kartalar','zonalar','chizmalar'];
 
   /* data.js dagi nashr etilgan ma'lumotning "barmoq izi".
      Qoralama shu izga bog'lanadi: data.js yangilansa, eski qoralama
@@ -98,6 +99,7 @@
     shablonlar: { title:'Shablonlar',  icon:'\u{1F4D0}', unit:'shablon', yangi:'Yangi shablon', gal:true },
     kartalar:   { title:'Defektatsiya kartalari', icon:'\u{1F50E}', unit:'karta', yangi:'Yangi karta', gal:true },
     zonalar:    { title:'Defektoskop zonalari', icon:'\u{1F50D}', unit:'zona', yangi:'Yangi zona', gal:true },
+    chizmalar:  { title:'Ta\u2019mir chizmalari', icon:'\u{1F4D0}', unit:'chizma', yangi:'Yangi chizma', gal:true },
   };
 
   const FIELDS = {
@@ -128,6 +130,11 @@
       { k:'nom',  label:'Detal va pozitsiya nomi', req:true },
       { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar_dk/dk-rama-v2.jpg' },
       { k:'izoh', label:'Nuqson, aniqlash usuli va qaror', hint:'brak / payvand / naplavka' },
+    ],
+    chizmalar: [
+      { k:'nom',  label:'Chizma nomi va shifri', req:true },
+      { k:'rasm', label:'Rasm havolasi', hint:'masalan: rasmlar_ch/ch-10-yon-rama.jpg' },
+      { k:'izoh', label:'Izoh \u2014 o\u2018lchamlar, material, eslatmalar' },
     ],
     zonalar: [
       { k:'nom',  label:'Detal / zona nomi', req:true },
@@ -620,6 +627,7 @@
       block('DARSLIKLAR', store.darsliklar, '3) DARSLIKLAR \u2014 o\u2018quv materiallari') + '\n' +
       block('SHABLONLAR', store.shablonlar, '5) SHABLONLAR \u2014 rasm va nomi') + '\n' +
       block('KARTALAR', store.kartalar, '7) DEFEKTATSIYA KARTALARI \u2014 nuqson va qaror') + '\n' +
+      block('CHIZMALAR', store.chizmalar, '8) TA\u2019MIR CHIZMALARI \u2014 \u0418\u043b\u043e\u0432\u0430 \u0417') + '\n' +
       block('ZONALAR', store.zonalar, '6) DEFEKTOSKOP NAZORATIDAN O\u2018TUVCHI ZONALAR') + '\n' +
       '/* 4) TESTLAR \u2014 "togri" to\u2018g\u2018ri javob indeksi (0 dan boshlanadi) */\n' +
       'const TESTLAR = [\n' + testRows + (testRows ? ',' : '') + '\n];\n';
